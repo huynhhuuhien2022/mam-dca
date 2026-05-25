@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-compass-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#38BDF8"></stop><stop offset="1" stop-color="#0369A1"></stop>
+  </linearGradient>
+  <linearGradient id="icn-compass-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#38BDF8"></stop><stop offset="1" stop-color="#0369A1"></stop>
+  </linearGradient>
+</defs>
+      
+      <circle cx="26" cy="26" r="16" fill="white" stroke="url(#icn-compass-g)" stroke-width="5"></circle>
+      
+      <circle cx="26" cy="26" r="13" fill="url(#icn-compass-g)" opacity="0.15"></circle>
+      
+      <path d="M 26 18 L 28 24 L 34 26 L 28 28 L 26 34 L 24 28 L 18 26 L 24 24 Z" fill="url(#icn-compass-g)"></path>
+      
+      <path d="M 18 22 Q 18 16 24 16" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"></path>
+      
+      <rect x="38" y="38" width="20" height="8" rx="4" fill="url(#icn-compass-g)" transform="rotate(45 38 38)"></rect>
+</svg>

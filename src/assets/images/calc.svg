@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-calc-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#A78BFA"></stop><stop offset="1" stop-color="#6D28D9"></stop>
+  </linearGradient>
+  <linearGradient id="icn-calc-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#A78BFA"></stop><stop offset="1" stop-color="#6D28D9"></stop>
+  </linearGradient>
+</defs>
+      <rect x="10" y="6" width="44" height="52" rx="6" fill="url(#icn-calc-g)"></rect>
+      <rect x="14" y="10" width="36" height="14" rx="3" fill="#1E1B4B"></rect>
+      <text x="46" y="22" text-anchor="end" font-size="11" font-weight="900" fill="#86EFAC" font-family="monospace">2.5M</text>
+      <rect x="14" y="28" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="24" y="28" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="34" y="28" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="44" y="28" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="14" y="35" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="24" y="35" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="34" y="35" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="44" y="35" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="14" y="42" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="24" y="42" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="34" y="42" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="44" y="42" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="14" y="49" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="24" y="49" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="34" y="49" width="8" height="5" rx="1.5" fill="white" opacity="0.9"></rect><rect x="44" y="49" width="8" height="5" rx="1.5" fill="#22C55E" opacity="1"></rect>
+</svg>

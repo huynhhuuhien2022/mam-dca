@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-bell-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FB923C"></stop><stop offset="1" stop-color="#9A3412"></stop>
+  </linearGradient>
+  <linearGradient id="icn-bell-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FB923C"></stop><stop offset="1" stop-color="#9A3412"></stop>
+  </linearGradient>
+</defs>
+      <path d="M 32 6 Q 20 6 16 22 L 16 38 L 8 48 L 56 48 L 48 38 L 48 22 Q 44 6 32 6 Z" fill="url(#icn-bell-g)"></path>
+      <circle cx="32" cy="6" r="4" fill="url(#icn-bell-g)"></circle>
+      <path d="M 26 52 Q 32 60 38 52" stroke="url(#icn-bell-g)" stroke-width="5" fill="none" stroke-linecap="round"></path>
+      <ellipse cx="24" cy="20" rx="4" ry="6" fill="white" opacity="0.35"></ellipse>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+        <radialGradient id="icn-treeSeed-seedBg" cx="0.5" cy="0.4" r="0.6">
+          <stop offset="0" stop-color="#FEF9C3"></stop><stop offset="1" stop-color="#FDE68A"></stop>
+        </radialGradient>
+        <radialGradient id="icn-treeSeed-seed" cx="0.35" cy="0.3" r="0.8">
+          <stop offset="0" stop-color="#FCD34D"></stop><stop offset="0.5" stop-color="#D97706"></stop><stop offset="1" stop-color="#78350F"></stop>
+        </radialGradient>
+        <linearGradient id="icn-treeSeed-soil0" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#A16207"></stop><stop offset="1" stop-color="#5B2F0F"></stop>
+        </linearGradient>
+      </defs>
+      <circle cx="32" cy="32" r="28" fill="url(#icn-treeSeed-seedBg)"></circle>
+      <path d="M 12 44 Q 12 40 16 40 L 48 40 Q 52 40 52 44 L 52 52 Q 52 56 48 56 L 16 56 Q 12 56 12 52 Z" fill="url(#icn-treeSeed-soil0)"></path>
+      <ellipse cx="32" cy="40" rx="20" ry="3" fill="#5B2F0F"></ellipse>
+      <ellipse cx="32" cy="34" rx="8" ry="11" fill="url(#icn-treeSeed-seed)"></ellipse>
+      <ellipse cx="28" cy="30" rx="3" ry="4" fill="white" opacity="0.5"></ellipse>
+      <path d="M 32 24 Q 30 28 32 32 Q 34 28 32 24" fill="#FEF08A"></path>
+      <circle cx="14" cy="18" r="2" fill="#FACC15"></circle>
+      <circle cx="48" cy="22" r="2" fill="#FBBF24"></circle>
+      <circle cx="50" cy="14" r="1.5" fill="#FEF08A"></circle>
+</svg>

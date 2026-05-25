@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-seedling-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#4ADE80"></stop><stop offset="1" stop-color="#15803D"></stop>
+  </linearGradient>
+  <linearGradient id="icn-seedling-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4ADE80"></stop><stop offset="1" stop-color="#15803D"></stop>
+  </linearGradient>
+</defs>
+      <path d="M 32 56 L 32 32" stroke="#15803D" stroke-width="5" stroke-linecap="round"></path>
+      <ellipse cx="20" cy="30" rx="12" ry="7" fill="url(#icn-seedling-g)" transform="rotate(-25 20 30)"></ellipse>
+      <ellipse cx="44" cy="26" rx="13" ry="8" fill="url(#icn-seedling-g)" transform="rotate(25 44 26)"></ellipse>
+      <ellipse cx="16" cy="26" rx="4" ry="2" fill="white" opacity="0.5" transform="rotate(-25 16 26)"></ellipse>
+      <circle cx="32" cy="56" r="4" fill="#A16207"></circle>
+</svg>

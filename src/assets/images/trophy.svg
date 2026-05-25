@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-trophy-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FACC15"></stop><stop offset="1" stop-color="#A16207"></stop>
+  </linearGradient>
+  <linearGradient id="icn-trophy-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FACC15"></stop><stop offset="1" stop-color="#A16207"></stop>
+  </linearGradient>
+</defs>
+      <path d="M 14 12 L 50 12 L 50 26 Q 50 40 32 42 Q 14 40 14 26 Z" fill="url(#icn-trophy-g)"></path>
+      <path d="M 28 42 L 36 42 L 36 50 L 28 50 Z" fill="#A16207"></path>
+      <rect x="20" y="50" width="24" height="6" rx="2" fill="url(#icn-trophy-g)"></rect>
+      <path d="M 8 16 Q 4 16 4 22 Q 4 30 14 32" stroke="url(#icn-trophy-g)" stroke-width="4" fill="none" stroke-linecap="round"></path>
+      <path d="M 56 16 Q 60 16 60 22 Q 60 30 50 32" stroke="url(#icn-trophy-g)" stroke-width="4" fill="none" stroke-linecap="round"></path>
+      <text x="32" y="32" text-anchor="middle" font-size="14" font-weight="900" fill="#78350F" font-family="Nunito, sans-serif">★</text>
+</svg>

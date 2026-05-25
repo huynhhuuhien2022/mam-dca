@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-home-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#4ADE80"></stop><stop offset="1" stop-color="#15803D"></stop>
+  </linearGradient>
+  <linearGradient id="icn-home-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4ADE80"></stop><stop offset="1" stop-color="#15803D"></stop>
+  </linearGradient>
+</defs>
+      <path d="M 32 8 L 56 28 L 56 52 Q 56 56 52 56 L 40 56 L 40 40 Q 40 36 36 36 L 28 36 Q 24 36 24 40 L 24 56 L 12 56 Q 8 56 8 52 L 8 28 Z" fill="url(#icn-home-g)" stroke="#15803D" stroke-width="2" stroke-linejoin="round"></path>
+      <circle cx="22" cy="20" r="2" fill="white" opacity="0.4"></circle>
+</svg>

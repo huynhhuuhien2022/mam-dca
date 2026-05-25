@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" style="overflow:visible">
+<defs>
+  <linearGradient id="icn-sparkle-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FACC15"></stop><stop offset="1" stop-color="#C084FC"></stop>
+  </linearGradient>
+  <linearGradient id="icn-sparkle-g2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FACC15"></stop><stop offset="1" stop-color="#C084FC"></stop>
+  </linearGradient>
+</defs>
+      
+      <path d="M 32 6 Q 34 22 38 26 Q 42 30 58 32 Q 42 34 38 38 Q 34 42 32 58 Q 30 42 26 38 Q 22 34 6 32 Q 22 30 26 26 Q 30 22 32 6 Z" fill="url(#icn-sparkle-g)"></path>
+      
+      <path d="M 50 12 Q 51 17 52 18 Q 53 19 58 20 Q 53 21 52 22 Q 51 23 50 28 Q 49 23 48 22 Q 47 21 42 20 Q 47 19 48 18 Q 49 17 50 12 Z" fill="#C084FC"></path>
+      
+      <path d="M 14 44 Q 14.7 47 15.5 47.5 Q 16.3 48 19 48.5 Q 16.3 49 15.5 49.5 Q 14.7 50 14 53 Q 13.3 50 12.5 49.5 Q 11.7 49 9 48.5 Q 11.7 48 12.5 47.5 Q 13.3 47 14 44 Z" fill="#F472B6"></path>
+      
+      <circle cx="28" cy="26" r="3" fill="white" opacity="0.6"></circle>
+</svg>
