@@ -10,7 +10,7 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://mam-dca.vercel.app'),
+  metadataBase: new URL('https://mam-dca-huynhhuuhien2022-3059s-projects.vercel.app'),
   title: 'Mầm · DCA Advisory',
   description: 'Công cụ tư vấn & mô phỏng DCA miễn phí cho nhà đầu tư trẻ Việt Nam. Lập kế hoạch đầu tư định kỳ vào ETF, quỹ mở, cổ phiếu và vàng.',
   manifest: '/manifest.json',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Mầm · DCA Advisory',
     description: 'Công cụ tư vấn & mô phỏng DCA miễn phí cho nhà đầu tư trẻ Việt Nam',
-    url: 'https://mam-dca.vercel.app',
+    url: 'https://mam-dca-huynhhuuhien2022-3059s-projects.vercel.app',
     siteName: 'Mầm',
     images: [{ url: '/mam-logo-512.png', width: 512, height: 512, alt: 'Mầm DCA' }],
     locale: 'vi_VN',

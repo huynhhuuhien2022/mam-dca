@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mam-dca.vercel.app/sitemap.xml
+Sitemap: https://mam-dca-huynhhuuhien2022-3059s-projects.vercel.app/sitemap.xml
