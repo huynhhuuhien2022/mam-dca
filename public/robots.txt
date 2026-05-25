@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mam-dca.vercel.app/sitemap.xml

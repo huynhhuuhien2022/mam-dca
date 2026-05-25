@@ -1,0 +1,83 @@
+/* ============================================================
+   Sapling mascot animations — ported from sapling.jsx
+   ============================================================ */
+
+.mam-sap-anim { animation: mam-breathe 4.2s ease-in-out infinite; }
+
+@keyframes mam-breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.025); }
+}
+
+.mam-tree-sway {
+  transform-origin: 512px 648px;
+  animation: mam-tree-sway 3.8s ease-in-out infinite;
+}
+.mam-tree-sway-slow {
+  transform-origin: 512px 648px;
+  animation: mam-tree-sway 4.6s ease-in-out infinite;
+}
+@keyframes mam-tree-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
+}
+
+.mam-leaf { transform-box: fill-box; transform-origin: 50% 100%; }
+.mam-leaf-l      { animation: mam-leaf-l 2.6s ease-in-out infinite; }
+.mam-leaf-r      { animation: mam-leaf-r 2.6s ease-in-out infinite; }
+.mam-leaf-l-slow { animation: mam-leaf-l 3.4s ease-in-out infinite; }
+.mam-leaf-r-slow { animation: mam-leaf-r 3.4s ease-in-out infinite; }
+@keyframes mam-leaf-l { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes mam-leaf-r { 0%, 100% { transform: rotate(6deg); }  50% { transform: rotate(-6deg); } }
+
+.mam-canopy {
+  transform-origin: 512px 460px;
+  animation: mam-canopy 4.4s ease-in-out infinite;
+}
+@keyframes mam-canopy {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50%       { transform: rotate(2deg) translateY(-2px); }
+}
+
+.mam-fruit {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: mam-fruit 2.6s ease-in-out infinite;
+}
+@keyframes mam-fruit {
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%       { transform: scale(1.10); opacity: 1; }
+}
+
+/* Wind leaves */
+.mam-wind-leaf {
+  animation-duration: 6.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+.mam-wind-1 { animation-name: mam-wind-a; animation-delay: 0s; }
+.mam-wind-2 { animation-name: mam-wind-b; animation-delay: 2.2s; }
+.mam-wind-3 { animation-name: mam-wind-a; animation-delay: 4.4s; }
+
+@keyframes mam-wind-a {
+  0%   { transform: translate(-30%, 20%)  rotate(0deg);   opacity: 0; }
+  10%  { opacity: 0.85; }
+  50%  { transform: translate(55%, -10%)  rotate(360deg); opacity: 0.9; }
+  90%  { opacity: 0.55; }
+  100% { transform: translate(135%, -30%) rotate(720deg); opacity: 0; }
+}
+@keyframes mam-wind-b {
+  0%   { transform: translate(-25%, -10%) rotate(0deg);    opacity: 0; }
+  12%  { opacity: 0.75; }
+  55%  { transform: translate(50%, 18%)   rotate(-300deg); opacity: 0.85; }
+  92%  { opacity: 0.4; }
+  100% { transform: translate(130%, 28%)  rotate(-640deg); opacity: 0; }
+}
+
+.mam-whoosh { animation: mam-whoosh 5.5s ease-out infinite; animation-delay: 1.5s; }
+@keyframes mam-whoosh {
+  0%   { transform: translateX(-20%) scaleX(0.4); opacity: 0; }
+  30%  { opacity: 0.55; }
+  70%  { transform: translateX(50%)  scaleX(1.1); opacity: 0.45; }
+  100% { transform: translateX(110%) scaleX(0.6); opacity: 0; }
+}

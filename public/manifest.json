@@ -1,0 +1,26 @@
+{
+  "name": "Mầm · DCA Advisory",
+  "short_name": "Mầm",
+  "description": "Ứng dụng tư vấn DCA cho nhà đầu tư trẻ Việt Nam",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F8F5",
+  "theme_color": "#22C55E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/mam-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/mam-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "education"],
+  "lang": "vi"
+}
