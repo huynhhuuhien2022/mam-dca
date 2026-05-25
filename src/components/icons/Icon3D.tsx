@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useId } from 'react'
 
 interface IconProps { uid: string }
 
@@ -329,7 +329,7 @@ interface Icon3DProps {
 }
 
 export default function Icon3D({ name, size = 32, className }: Icon3DProps) {
-  const uid = useMemo(() => 'i' + Math.random().toString(36).slice(2, 7), [])
+  const uid = useId().replace(/:/g, '')
   const Comp = ICONS[name] ?? ICONS.coin
 
   return (
