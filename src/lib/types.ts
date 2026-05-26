@@ -66,6 +66,7 @@ export type AppAction =
   | { type: 'go'; screen: Screen; assetId?: string; prefill?: Partial<Plan> }
   | { type: 'requireAuth'; pending?: AppAction }
   | { type: 'login' }
+  | { type: 'setAuth'; value: boolean }
   | { type: 'logout' }
   | { type: 'addPlan'; plan: Omit<Plan, 'id' | 'startMonth' | 'totalInvested' | 'currentValue'> }
   | { type: 'showToast'; toast: ToastPayload }

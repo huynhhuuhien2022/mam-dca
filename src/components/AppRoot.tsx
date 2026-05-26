@@ -1,7 +1,9 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useTweaks } from '@/hooks/useTweaks'
+import { getSupabaseClient } from '@/lib/supabase'
 import AppShell from './shell/AppShell'
 import TweaksPanel from './tweaks/TweaksPanel'
 import Dashboard   from '@/features/dashboard'
@@ -19,7 +21,35 @@ const AUTH_SCREENS: Screen[] = ['login', 'signup']
 
 export default function AppRoot() {
   const screen = useAppStore(s => s.screen)
+  const dispatch = useAppStore(s => s.dispatch)
   const { tweaks, setTweak } = useTweaks()
+
+  useEffect(() => {
+    let mounted = true
+    let unsubscribe = () => {}
+
+    try {
+      const supabase = getSupabaseClient()
+
+      supabase.auth.getSession().then(({ data }) => {
+        if (!mounted) return
+        dispatch({ type: 'setAuth', value: Boolean(data.session) })
+      })
+
+      const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!mounted) return
+        dispatch({ type: 'setAuth', value: Boolean(session) })
+      })
+      unsubscribe = () => listener.subscription.unsubscribe()
+    } catch {
+      // Env not configured yet; keep demo auth flow.
+    }
+
+    return () => {
+      mounted = false
+      unsubscribe()
+    }
+  }, [dispatch])
 
   if (AUTH_SCREENS.includes(screen)) {
     return (

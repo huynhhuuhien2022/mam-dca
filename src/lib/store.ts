@@ -86,6 +86,9 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
       return base
     }
 
+    case 'setAuth':
+      return { auth: action.value }
+
     case 'logout':
       return { auth: false, screen: 'login', returnScreen: null, pendingAction: null }
 
