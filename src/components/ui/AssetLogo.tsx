@@ -1,15 +1,30 @@
 import { cn } from '@/lib/utils'
 import { shade } from '@/lib/utils'
-import type { Asset } from '@/lib/types'
 
 interface AssetLogoProps {
-  asset: Pick<Asset, 'id' | 'color'>
+  asset: { id: string; color: string; logoUrl?: string }
   size?: number
   className?: string
 }
 
 export default function AssetLogo({ asset, size = 40, className }: AssetLogoProps) {
   const txt = asset.id.length <= 4 ? asset.id : asset.id.slice(0, 3)
+  if (asset.logoUrl) {
+    return (
+      <img
+        src={asset.logoUrl}
+        alt={asset.id}
+        className={cn('flex-shrink-0 object-cover bg-white border border-gray-100', className)}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size * 0.32,
+          boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+        }}
+      />
+    )
+  }
+
   return (
     <div
       className={cn('grid place-items-center font-black flex-shrink-0 text-white', className)}

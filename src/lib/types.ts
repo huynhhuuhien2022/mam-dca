@@ -19,6 +19,7 @@ export interface Asset {
   color: string
   tags: string[]
   note: string
+  logoUrl?: string
   spark: number[]
   day: number
 }
