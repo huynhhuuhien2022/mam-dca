@@ -325,32 +325,3 @@ svg { max-width: 100%; }
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover { background: #B2B8B4; }
-
-/* ============================================================
-   Premium dark mode (body[data-style="premium"])
-   ============================================================ */
-body[data-style="premium"] {
-  background: #0a1a0f !important;
-}
-body[data-style="premium"] #mam-root,
-body[data-style="premium"] .bg-canvas  { background-color: #0F1A14 !important; }
-body[data-style="premium"] .bg-white   { background-color: #1A2A20 !important; }
-body[data-style="premium"] .bg-grass-50 { background-color: #0D2118 !important; }
-body[data-style="premium"] .text-ink-1 { color: #F0FDF4 !important; }
-body[data-style="premium"] .text-ink-2 { color: #DCFCE7 !important; }
-body[data-style="premium"] .text-ink-3 { color: #86EFAC !important; }
-body[data-style="premium"] .text-ink-4 { color: #4ADE80 !important; }
-body[data-style="premium"] .border-gray-50,
-body[data-style="premium"] .border-gray-100,
-body[data-style="premium"] .border-gray-200 { border-color: #1F3327 !important; }
-body[data-style="premium"] .shadow-card { box-shadow: 0 4px 14px rgba(0,0,0,0.3) !important; }
-body[data-style="premium"] .shadow-cta  { box-shadow: 0 6px 18px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.2) !important; }
-
-/* Density — compact mode reduces vertical padding */
-body[data-density="compact"] .px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
-body[data-density="compact"] .py-4 { padding-top: 0.5rem !important;  padding-bottom: 0.5rem !important; }
-body[data-density="compact"] .py-3 { padding-top: 0.375rem !important; padding-bottom: 0.375rem !important; }
-body[data-density="compact"] .gap-4 { gap: 0.625rem !important; }
-body[data-density="compact"] .gap-3 { gap: 0.5rem !important; }
-body[data-density="compact"] .mt-5  { margin-top: 0.75rem !important; }
-body[data-density="compact"] .mt-4  { margin-top: 0.625rem !important; }

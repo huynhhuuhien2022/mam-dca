@@ -2,10 +2,8 @@
 
 import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
-import { useTweaks } from '@/hooks/useTweaks'
 import { getSupabaseClient } from '@/lib/supabase'
 import AppShell from './shell/AppShell'
-import TweaksPanel from './tweaks/TweaksPanel'
 import Dashboard   from '@/features/dashboard'
 import Browse      from '@/features/browse'
 import AssetDetail from '@/features/asset-detail'
@@ -22,7 +20,6 @@ const AUTH_SCREENS: Screen[] = ['login', 'signup']
 export default function AppRoot() {
   const screen = useAppStore(s => s.screen)
   const dispatch = useAppStore(s => s.dispatch)
-  const { tweaks, setTweak } = useTweaks()
 
   useEffect(() => {
     let mounted = true
@@ -55,23 +52,21 @@ export default function AppRoot() {
     return (
       <>
         <div className="h-full">
-          <Login mode={screen === 'signup' ? 'signup' : 'login'} />
+          <Login mode="login" />
         </div>
         <Toast />
-        <TweaksPanel tweaks={tweaks} setTweak={setTweak} />
       </>
     )
   }
 
-  const Page = getPage(screen, tweaks.layout)
+  const Page = getPage(screen, 'A')
 
   return (
     <>
-      <AppShell showStreak={tweaks.showStreak}>
+      <AppShell showStreak>
         <Page key={screen} />
       </AppShell>
       <Toast />
-      <TweaksPanel tweaks={tweaks} setTweak={setTweak} />
     </>
   )
 }
