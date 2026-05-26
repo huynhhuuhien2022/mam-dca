@@ -1,8 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { samplePlans } from './data'
-import type { AppAction, Plan, Screen, ToastPayload } from './types'
+import type { AppAction, Asset, Plan, Screen, ToastPayload } from './types'
 
 /* ============================================================
    App state — ported from App.jsx useReducer
@@ -11,6 +10,7 @@ interface AppState {
   screen: Screen
   auth: boolean
   assetId: string | null
+  assets: Asset[]
   plans: Plan[]
   totalValue: number
   totalInvested: number
@@ -30,13 +30,14 @@ function derivePortfolio(plans: Plan[]) {
   }
 }
 
-const { totalValue, totalInvested } = derivePortfolio(samplePlans)
+const { totalValue, totalInvested } = derivePortfolio([])
 
 export const useAppStore = create<AppState>((set, get) => ({
   screen: 'dashboard',
   auth: false,
   assetId: null,
-  plans: samplePlans,
+  assets: [],
+  plans: [],
   totalValue,
   totalInvested,
   streak: 14,
@@ -58,6 +59,9 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
         assetId: action.assetId ?? state.assetId,
         prefill: action.prefill ?? null,
       }
+
+    case 'setAssets':
+      return { assets: action.assets }
 
     case 'requireAuth': {
       const authScreens: Screen[] = ['login', 'signup']
@@ -129,3 +133,4 @@ export const selectScreen  = (s: AppState) => s.screen
 export const selectAuth    = (s: AppState) => s.auth
 export const selectPlans   = (s: AppState) => s.plans
 export const selectAssetId = (s: AppState) => s.assetId
+export const selectAssets  = (s: AppState) => s.assets

@@ -7,7 +7,7 @@ export type RiskLevel = 'Thấp' | 'Trung bình' | 'Cao'
 export type Freq = 'day' | 'week' | 'month'
 
 export interface Asset {
-  id: 'ETF' | 'BLUE' | 'GROW' | 'FUND' | 'BAL' | 'BOND' | 'GOLD' | 'SAVE'
+  id: string
   name: string
   sub: string
   mgr: string
@@ -25,7 +25,7 @@ export interface Asset {
 }
 
 export interface Allocation {
-  id: Asset['id']
+  id: string
   pct: number
 }
 
@@ -65,6 +65,7 @@ export interface ToastPayload {
 /* ── Store actions ── */
 export type AppAction =
   | { type: 'go'; screen: Screen; assetId?: string; prefill?: Partial<Plan> }
+  | { type: 'setAssets'; assets: Asset[] }
   | { type: 'requireAuth'; pending?: AppAction }
   | { type: 'login' }
   | { type: 'setAuth'; value: boolean }

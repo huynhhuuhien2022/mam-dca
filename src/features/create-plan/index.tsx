@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
-import { assets, assetMap } from '@/lib/data'
 import { fmtVND, fmtPct, projectValue, freqHelpers, shade, cn } from '@/lib/utils'
 import Confetti from '@/components/ui/Confetti'
 import Sapling from '@/components/sapling/Sapling'
@@ -274,12 +273,13 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
 /* ══════════════════════════════════════════════
    Step 1 — Assets
 ══════════════════════════════════════════════ */
-function StepAssets({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) => void }) {
+function StepAssets({ plan, setPlan, assets }: { plan: PlanDraft; setPlan: (p: PlanDraft) => void; assets: Asset[] }) {
   const [catFilter, setCatFilter] = useState('all')
   const selectedIds = new Set(plan.allocation.map(a => a.id))
   const totalPct = plan.allocation.reduce((s, a) => s + a.pct, 0)
   const isFull = totalPct === 100
   const available = assets.filter(a => !selectedIds.has(a.id) && (catFilter === 'all' || a.cat === catFilter))
+  const assetMap = Object.fromEntries(assets.map(a => [a.id, a])) as Record<string, Asset>
 
   function rebalance(alloc: Allocation[]): Allocation[] {
     if (!alloc.length) return alloc
@@ -436,7 +436,8 @@ function StepAssets({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft
 /* ══════════════════════════════════════════════
    Step 2 — Review
 ══════════════════════════════════════════════ */
-function StepReview({ plan }: { plan: PlanDraft }) {
+function StepReview({ plan, assets }: { plan: PlanDraft; assets: Asset[] }) {
+  const assetMap = Object.fromEntries(assets.map(a => [a.id, a])) as Record<string, Asset>
   const cagr = plan.allocation.reduce((acc, a) => acc + (assetMap[a.id]?.y5 ?? 7) * a.pct / 100, 0)
   const years = plan.duration || 10
   const periods = freqHelpers.periodsPerYear({ freq: plan.freq, freqDays: plan.freqDays })
@@ -566,7 +567,7 @@ function StepDone({ plan, dispatch }: { plan: PlanDraft; dispatch: (a: import('@
    Main CreatePlan
 ══════════════════════════════════════════════ */
 export default function CreatePlan() {
-  const { dispatch, auth, prefill } = useAppStore(useShallow(s => ({ dispatch: s.dispatch, auth: s.auth, prefill: s.prefill })))
+  const { dispatch, auth, prefill, assets } = useAppStore(useShallow(s => ({ dispatch: s.dispatch, auth: s.auth, prefill: s.prefill, assets: s.assets })))
   const initial = prefill ?? {}
 
   const [step, setStep] = useState(0)
@@ -604,8 +605,8 @@ export default function CreatePlan() {
       </div>
 
       {step === 0 && <StepGoal plan={plan} setPlan={setPlan} />}
-      {step === 1 && <StepAssets plan={plan} setPlan={setPlan} />}
-      {step === 2 && <StepReview plan={plan} />}
+      {step === 1 && <StepAssets plan={plan} setPlan={setPlan} assets={assets} />}
+      {step === 2 && <StepReview plan={plan} assets={assets} />}
       {step === 3 && <StepDone plan={plan} dispatch={dispatch} />}
 
       {step < 3 && (

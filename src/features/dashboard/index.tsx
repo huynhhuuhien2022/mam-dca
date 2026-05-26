@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
-import { assets, sparkSeed } from '@/lib/data'
 import { fmtVND, fmtPct, valueToStage } from '@/lib/utils'
 import Button from '@/components/ui/Button'
 import { HeroLayoutA, HeroLayoutB } from './components/HeroCard'
@@ -16,19 +15,20 @@ import { HeroSkeleton } from '@/components/ui/Skeleton'
 export default function Dashboard({ layout = 'A' }: { layout?: 'A' | 'B' }) {
   const [loading, setLoading] = useState(true)
   useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t) }, [])
-  const { plans, totalValue, totalInvested, streak, dispatch } = useAppStore(useShallow(s => ({
+  const { plans, totalValue, totalInvested, streak, dispatch, assets } = useAppStore(useShallow(s => ({
     plans: s.plans,
     totalValue: s.totalValue,
     totalInvested: s.totalInvested,
     streak: s.streak,
     dispatch: s.dispatch,
+    assets: s.assets,
   })))
 
   const profit    = totalValue - totalInvested
   const profitPct = totalInvested > 0 ? (profit / totalInvested) * 100 : 0
   const stage     = valueToStage(totalValue)
 
-  const chartData = useMemo(() => sparkSeed(42, 60, 0.025, 0.008), [])
+  const chartData = useMemo(() => Array.from({ length: 60 }, (_, i) => 100 + i * 0.8), [])
   const movers    = useMemo(() => [...assets].sort((a, b) => b.ytd - a.ytd).slice(0, 4), [])
 
   const heroProps = { totalValue, profit, profitPct, stage, chartData, dispatch }

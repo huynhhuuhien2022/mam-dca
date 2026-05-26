@@ -1,4 +1,4 @@
-import { assetMap } from '@/lib/data'
+import { useAppStore } from '@/lib/store'
 import { fmtVND, fmtPct, freqHelpers } from '@/lib/utils'
 import type { Plan, AppAction } from '@/lib/types'
 
@@ -8,6 +8,8 @@ interface PlanRowProps {
 }
 
 export default function PlanRow({ plan, dispatch }: PlanRowProps) {
+  const assets = useAppStore(s => s.assets)
+  const assetMap = Object.fromEntries(assets.map(a => [a.id, a]))
   const ret = plan.currentValue - plan.totalInvested
   const retPct = plan.totalInvested > 0 ? (ret / plan.totalInvested) * 100 : 0
   const allocAssets = plan.allocation

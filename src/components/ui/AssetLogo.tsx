@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { shade } from '@/lib/utils'
+import { useState } from 'react'
 
 interface AssetLogoProps {
   asset: { id: string; color: string; logoUrl?: string }
@@ -9,12 +10,14 @@ interface AssetLogoProps {
 
 export default function AssetLogo({ asset, size = 40, className }: AssetLogoProps) {
   const txt = asset.id.length <= 4 ? asset.id : asset.id.slice(0, 3)
-  if (asset.logoUrl) {
+  const [imgFailed, setImgFailed] = useState(false)
+  if (asset.logoUrl && !imgFailed) {
     return (
       <img
         src={asset.logoUrl}
         alt={asset.id}
-        className={cn('flex-shrink-0 object-cover bg-white border border-gray-100', className)}
+        onError={() => setImgFailed(true)}
+        className={cn('flex-shrink-0 object-contain p-1 bg-white border border-gray-100', className)}
         style={{
           width: size,
           height: size,

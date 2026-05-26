@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
-import { assets, sparkSeed } from '@/lib/data'
 import { fmtVND, fmtPct, projectValue, freqHelpers, shade, cn } from '@/lib/utils'
 import AssetLogo from '@/components/ui/AssetLogo'
 import RiskBadge from '@/components/ui/RiskBadge'
@@ -24,6 +23,17 @@ const RANGES = [
   { id: '5Y', label: '5Y', len: 250, trend: 0.02  },
 ]
 const AMOUNT_CHIPS = [500_000, 1_000_000, 2_000_000, 5_000_000]
+function buildSeries(seed: number, len = 120, vol = 0.03, trend = 0.002): number[] {
+  let v = 100
+  let s = seed
+  const out: number[] = []
+  const rng = () => { s = (s * 9301 + 49297) % 233280; return s / 233280 }
+  for (let i = 0; i < len; i++) {
+    v = v * (1 + (rng() - 0.5) * 2 * vol + trend)
+    out.push(v)
+  }
+  return out
+}
 
 function MiniStat({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
   return (
@@ -37,19 +47,21 @@ function MiniStat({ label, value, positive }: { label: string; value: string; po
 }
 
 export default function AssetDetail() {
-  const { assetId, dispatch, auth } = useAppStore(useShallow(s => ({ assetId: s.assetId, dispatch: s.dispatch, auth: s.auth })))
-
-  const asset = useMemo(() => assets.find(a => a.id === assetId) ?? assets[0], [assetId])
-
+  const { assetId, dispatch, auth, assets } = useAppStore(useShallow(s => ({ assetId: s.assetId, dispatch: s.dispatch, auth: s.auth, assets: s.assets })))
   const [range, setRange]   = useState('1Y')
   const [amount, setAmount] = useState(1_000_000)
   const [freq, setFreq]     = useState<Freq>('month')
+
+  const asset = useMemo(() => assets.find(a => a.id === assetId) ?? assets[0], [assetId, assets])
+  if (!asset) {
+    return <div className="py-8 text-center text-ink-3 font-semibold">Chưa có dữ liệu tài sản từ Supabase</div>
+  }
 
   const chartData = useMemo(() => {
     const r = RANGES.find(x => x.id === range) ?? RANGES[3]
     const seed = asset.id.charCodeAt(0) * 13
     const vol = asset.cat === 'stock' ? 0.04 : 0.02
-    return sparkSeed(seed, r.len, vol, (asset.y5 / 100) * r.trend)
+    return buildSeries(seed, r.len, vol, (asset.y5 / 100) * r.trend)
   }, [asset, range])
 
   const { fv, invested } = useMemo(() => {

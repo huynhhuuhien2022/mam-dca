@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
-import { assets } from '@/lib/data'
 import { fmtVND, fmtPct, cn } from '@/lib/utils'
 import AssetLogo from '@/components/ui/AssetLogo'
 import Button from '@/components/ui/Button'
@@ -22,12 +21,14 @@ function calcFV(amount: number, freq: Freq, years: number, cagr: number) {
 
 export default function Calculator() {
   const dispatch = useAppStore(s => s.dispatch)
+  const assets = useAppStore(s => s.assets)
   const [amount, setAmount] = useState(2_000_000)
   const [years, setYears]   = useState(5)
   const [freq, setFreq]     = useState<Freq>('month')
-  const [assetId, setAssetId] = useState('ETF')
+  const [assetId, setAssetId] = useState('')
 
   const asset = assets.find(a => a.id === assetId) ?? assets[0]
+  if (!asset) return <div className="py-8 text-center text-ink-3 font-semibold">Chưa có dữ liệu tài sản từ Supabase</div>
   const ppy = freq === 'day' ? 250 : freq === 'week' ? 52 : 12
 
   const { fv, invested, profit, multiple, snapshots } = useMemo(() => {

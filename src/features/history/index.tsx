@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
 import { fmtVND } from '@/lib/utils'
-import { assetMap } from '@/lib/data'
 import Icon3D from '@/components/icons/Icon3D'
 import Button from '@/components/ui/Button'
 
@@ -22,7 +21,8 @@ interface TxRow {
 }
 
 export default function History() {
-  const { plans, streak } = useAppStore(useShallow(s => ({ plans: s.plans, streak: s.streak })))
+  const { plans, streak, assets } = useAppStore(useShallow(s => ({ plans: s.plans, streak: s.streak, assets: s.assets })))
+  const assetMap = useMemo(() => Object.fromEntries(assets.map(a => [a.id, a])), [assets])
 
   const txns = useMemo<TxRow[]>(() => {
     const out: TxRow[] = []
