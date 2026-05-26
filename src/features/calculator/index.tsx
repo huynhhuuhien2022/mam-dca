@@ -160,7 +160,7 @@ export default function Calculator() {
             </div>
           </div>
 
-          <Button variant="white" size="lg" className="w-full mt-5"
+          <Button variant="magic" size="lg" className="w-full mt-5"
             onClick={() => dispatch({ type: 'go', screen: 'create', prefill: { amount, freq, allocation: [{ id: asset.id as import('@/lib/types').Asset['id'], pct: 100 }] } })}
           >
             Bắt đầu DCA ngay 🚀
@@ -178,7 +178,7 @@ export default function Calculator() {
               const fv2 = calcFV(amount, freq, years, a.y5)
               return (
                 <button key={a.id} onClick={() => setAssetId(a.id)}
-                  className={cn('p-3 rounded-2xl border-2 text-left transition-all',
+                  className={cn('min-h-[74px] p-3.5 rounded-2xl border-2 text-left transition-all',
                     assetId === a.id ? 'border-grass-500 bg-grass-50' : 'border-gray-100 bg-white hover:border-grass-300'
                   )}
                 >

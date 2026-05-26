@@ -87,7 +87,7 @@ export default function Browse() {
             className="flex-1 min-w-0 border-0 outline-0 bg-transparent font-semibold text-[13px]"
           />
           {q && (
-            <button onClick={() => setQ('')} className="text-ink-3">
+            <button onClick={() => setQ('')} className="w-8 h-8 rounded-full grid place-items-center text-ink-3 hover:bg-canvas">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>

@@ -206,9 +206,49 @@ svg { max-width: 100%; }
 .brand-gradient { background: linear-gradient(140deg, color-mix(in srgb, var(--primary) 70%, white), var(--primary-deep, #16A34A)); }
 .brand-soft     { background: linear-gradient(140deg, color-mix(in srgb, var(--primary) 25%, white), color-mix(in srgb, var(--primary) 55%, white)); }
 
+/* Magic UI inspired shimmer for primary CTAs */
+.magic-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: -40% auto -40% -45%;
+  width: 42%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.58), transparent);
+  animation: magicShimmer 2.8s var(--ease-standard) infinite;
+  pointer-events: none;
+}
+.magic-shimmer > * { position: relative; z-index: 1; }
+
+@keyframes magicShimmer {
+  0%, 45% { left: -45%; }
+  100% { left: 125%; }
+}
+
 /* Text balance helpers */
 .balance { text-wrap: balance; }
 .pretty  { text-wrap: pretty; }
+
+/* Stable segmented control styles (avoid global utility overrides) */
+.seg-option {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 800;
+  color: #4F5A53;
+  background: transparent;
+  transition: all 180ms var(--ease-standard);
+}
+.seg-option:hover {
+  background: rgba(255, 255, 255, 0.82);
+}
+.seg-option[data-active="true"] {
+  background: #16A34A;
+  border-color: #15803D;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.22);
+}
 
 /* ============================================================
    Page enter animation

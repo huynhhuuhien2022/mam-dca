@@ -41,7 +41,7 @@ export default function BottomNav() {
         <button
           key={tab.id}
           onClick={() => dispatch({ type: 'go', screen: 'create' })}
-          className="-mt-7 w-14 h-14 rounded-[22px] brand-gradient grid place-items-center shadow-cta active:scale-95 transition-transform"
+          className="-mt-7 w-15 h-15 rounded-[24px] brand-gradient grid place-items-center shadow-cta active:scale-95 transition-transform"
           aria-label="Tạo kế hoạch"
         >
           <ImgIcon name="plus" size={28} />
@@ -50,7 +50,7 @@ export default function BottomNav() {
         <button
           key={tab.id}
           onClick={() => dispatch({ type: 'go', screen: tab.id })}
-          className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-colors ${
+          className={`flex-1 min-h-12 flex flex-col items-center justify-center gap-1 px-1.5 py-2 rounded-xl transition-colors ${
             activeTab === tab.id ? 'text-grass-500' : 'text-ink-4'
           }`}
         >

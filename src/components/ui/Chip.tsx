@@ -36,7 +36,7 @@ export default function Chip({
   return (
     <button
       className={cn(
-        'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12.5px] font-bold border whitespace-nowrap transition-colors cursor-pointer active:scale-95',
+        'inline-flex min-h-9 items-center justify-center gap-2 rounded-full border px-4 py-1.5 text-[12.5px] font-extrabold whitespace-nowrap transition-colors cursor-pointer active:scale-95',
         active ? variantActive[variant] : variantInactive[variant],
         className,
       )}

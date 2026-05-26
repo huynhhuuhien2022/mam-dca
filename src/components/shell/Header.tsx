@@ -1,14 +1,17 @@
-'use client'
+"use client";
 
-import { useAppStore } from '@/lib/store'
-import { useShallow } from 'zustand/react/shallow'
+import Button from "@/components/ui/Button";
+import { useAppStore } from "@/lib/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Header() {
-  const { auth, screen, dispatch } = useAppStore(useShallow(s => ({
-    auth: s.auth,
-    screen: s.screen,
-    dispatch: s.dispatch,
-  })))
+  const { auth, screen, dispatch } = useAppStore(
+    useShallow((s) => ({
+      auth: s.auth,
+      screen: s.screen,
+      dispatch: s.dispatch,
+    })),
+  );
 
   return (
     <>
@@ -17,12 +20,33 @@ export default function Header() {
         {/* Logo */}
         <div className="w-9 h-9 rounded-xl brand-gradient grid place-items-center shadow-cta flex-shrink-0">
           <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden>
-            <path d="M 16 28 L 16 14" stroke="white" strokeWidth="3" strokeLinecap="round" />
-            <ellipse cx="10" cy="12" rx="6" ry="4" fill="white" transform="rotate(-22 10 12)" />
-            <ellipse cx="22" cy="12" rx="6" ry="4" fill="white" transform="rotate(22 22 12)" />
+            <path
+              d="M 16 28 L 16 14"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <ellipse
+              cx="10"
+              cy="12"
+              rx="6"
+              ry="4"
+              fill="white"
+              transform="rotate(-22 10 12)"
+            />
+            <ellipse
+              cx="22"
+              cy="12"
+              rx="6"
+              ry="4"
+              fill="white"
+              transform="rotate(22 22 12)"
+            />
           </svg>
         </div>
-        <span className="font-black text-[18px] tracking-tight text-grass-500">Mầm</span>
+        <span className="font-black text-[18px] tracking-tight text-grass-500">
+          Mầm
+        </span>
 
         <div className="ml-auto flex items-center gap-1.5">
           {/* Bell */}
@@ -34,18 +58,20 @@ export default function Header() {
           {/* Auth button */}
           {auth ? (
             <button
-              onClick={() => dispatch({ type: 'go', screen: 'settings' })}
+              onClick={() => dispatch({ type: "go", screen: "settings" })}
               className="w-9 h-9 rounded-xl brand-soft text-grass-900 grid place-items-center font-black text-[13px] active:scale-95 transition-transform"
             >
               MN
             </button>
           ) : (
-            <button
-              onClick={() => dispatch({ type: 'go', screen: 'login' })}
-              className="h-9 px-3 rounded-xl bg-grass-500 text-white font-extrabold text-[12px] shadow-cta active:scale-95 transition-transform flex items-center gap-1 whitespace-nowrap"
+            <Button
+              variant="magic"
+              size="sm"
+              onClick={() => dispatch({ type: "go", screen: "login" })}
+              className="h-10 min-w-[96px] rounded-full px-5 text-[12.5px] tracking-tight ring-1 ring-white/35"
             >
               Đăng nhập
-            </button>
+            </Button>
           )}
         </div>
       </header>
@@ -56,11 +82,11 @@ export default function Header() {
           <span className="text-base">🔍</span>
           <input
             placeholder="Tìm quỹ, ETF, cổ phiếu..."
-            onFocus={() => dispatch({ type: 'go', screen: 'browse' })}
+            onFocus={() => dispatch({ type: "go", screen: "browse" })}
             className="flex-1 min-w-0 border-0 outline-none bg-transparent text-ink-1 font-semibold text-[14px] placeholder:text-ink-4"
           />
         </div>
       </div>
     </>
-  )
+  );
 }

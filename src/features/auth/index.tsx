@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAppStore } from '@/lib/store'
+import Button from '@/components/ui/Button'
 import type { LoginMode } from '@/lib/types'
 
 function fmtPhone(s: string): string {
@@ -31,7 +32,7 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
       <div className="px-4 pt-2 pb-3 flex items-center gap-3 flex-shrink-0">
         <button
           onClick={goBack}
-          className="w-9 h-9 rounded-xl bg-white shadow-card grid place-items-center active:scale-95 transition-transform text-lg"
+          className="w-10 h-10 rounded-2xl bg-white shadow-card grid place-items-center active:scale-95 transition-transform text-lg"
         >
           ←
         </button>
@@ -87,21 +88,25 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
         </div>
 
         {/* Social buttons — full width, stacked */}
-        <div className="flex flex-col gap-2">
-          <button
+        <div className="flex flex-col gap-2.5">
+          <Button
+            variant="ghost"
+            size="lg"
             onClick={signIn}
-            className="bg-white rounded-2xl shadow-card py-3 px-4 flex items-center justify-center gap-2.5 font-extrabold text-[14px] active:scale-[0.98] transition-transform text-ink-1"
+            className="w-full rounded-2xl bg-white text-ink-1 shadow-card"
           >
             <GoogleSVG />
             Tiếp tục với Google
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="dark"
+            size="lg"
             onClick={signIn}
-            className="bg-ink-1 text-white rounded-2xl py-3 px-4 flex items-center justify-center gap-2.5 font-extrabold text-[14px] active:scale-[0.98] transition-transform"
+            className="w-full rounded-2xl"
           >
             <AppleSVG />
             Tiếp tục với Apple
-          </button>
+          </Button>
         </div>
 
         {/* Switch login / signup */}
@@ -109,7 +114,7 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
           {mode === 'signup' ? 'Đã có tài khoản? ' : 'Chưa có tài khoản? '}
           <button
             onClick={() => dispatch({ type: 'go', screen: mode === 'signup' ? 'login' : 'signup' })}
-            className="text-grass-600 font-extrabold underline underline-offset-2 active:opacity-70"
+            className="inline-flex min-h-8 items-center rounded-full px-2 text-grass-600 font-extrabold underline underline-offset-2 active:opacity-70"
           >
             {mode === 'signup' ? 'Đăng nhập' : 'Tạo ngay'}
           </button>
@@ -125,17 +130,15 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
 
       {/* Sticky bottom CTA */}
       <div className="px-4 pb-5 pt-3 flex-shrink-0 bg-canvas">
-        <button
+        <Button
+          variant={phoneValid ? 'magic' : 'soft'}
+          size="lg"
           disabled={!phoneValid}
           onClick={signIn}
-          className={`w-full rounded-2xl py-3.5 font-extrabold text-[15px] transition-all ${
-            phoneValid
-              ? 'bg-ink-1 text-white shadow-card active:scale-[0.98]'
-              : 'bg-line text-ink-4 cursor-not-allowed'
-          }`}
+          className="w-full rounded-2xl"
         >
           {mode === 'signup' ? 'Tạo tài khoản →' : 'Đăng nhập →'}
-        </button>
+        </Button>
       </div>
     </div>
   )

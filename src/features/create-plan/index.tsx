@@ -11,6 +11,7 @@ import DonutAllocation from '@/components/charts/DonutAllocation'
 import AssetLogo from '@/components/ui/AssetLogo'
 import RiskBadge from '@/components/ui/RiskBadge'
 import Button from '@/components/ui/Button'
+import Chip from '@/components/ui/Chip'
 import type { Allocation, Asset, Freq } from '@/lib/types'
 
 /* ── types ── */
@@ -89,7 +90,7 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
         <div className="px-3 py-3 flex items-center gap-3">
           <button
             onClick={() => setShowEmoji(!showEmoji)}
-            className={cn('w-11 h-11 rounded-xl grid place-items-center text-2xl flex-shrink-0 transition-colors',
+            className={cn('w-12 h-12 rounded-2xl grid place-items-center text-2xl flex-shrink-0 transition-colors',
               showEmoji ? 'bg-grass-50 ring-2 ring-grass-200' : 'bg-canvas hover:bg-grass-50'
             )}
           >
@@ -106,7 +107,7 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
           <div className="grid grid-cols-6 gap-1 p-2 bg-canvas border-t border-gray-100">
             {EMOJIS.map(e => (
               <button key={e} onClick={() => { setPlan({ ...plan, emoji: e }); setShowEmoji(false) }}
-                className={cn('text-2xl p-2 rounded-xl transition-colors', plan.emoji === e ? 'bg-white shadow-sm' : 'hover:bg-white')}
+                className={cn('min-h-11 text-2xl p-2 rounded-xl transition-colors', plan.emoji === e ? 'bg-white shadow-sm' : 'hover:bg-white')}
               >{e}</button>
             ))}
           </div>
@@ -127,11 +128,14 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
         </div>
         <div className="flex gap-1.5 flex-wrap mt-3">
           {AMOUNTS.map(a => (
-            <button key={a} onClick={() => setPlan({ ...plan, amount: a })}
-              className={cn('px-3 py-1.5 rounded-full text-[12px] font-extrabold transition-colors',
-                plan.amount === a ? 'bg-ink-1 text-white' : 'bg-canvas text-ink-2 hover:bg-grass-50'
-              )}
-            >{fmtVND(a)}</button>
+            <Chip
+              key={a}
+              active={plan.amount === a}
+              onClick={() => setPlan({ ...plan, amount: a })}
+              className={cn('text-[12px]', plan.amount !== a && 'bg-canvas')}
+            >
+              {fmtVND(a)}
+            </Chip>
           ))}
         </div>
       </div>
@@ -144,10 +148,11 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
         </div>
         <div className="bg-canvas rounded-xl p-1 flex mt-2.5">
           {(['day','week','month'] as Freq[]).map((f, i) => (
-            <button key={f} onClick={() => setFreqType(f)}
-              className={cn('flex-1 py-2 rounded-lg font-extrabold text-[13px] transition-all',
-                plan.freq === f ? 'bg-white text-ink-1 shadow-sm' : 'text-ink-3'
-              )}
+            <button
+              key={f}
+              onClick={() => setFreqType(f)}
+              data-active={plan.freq === f}
+              className="seg-option flex-1"
             >{['Hằng ngày','Hằng tuần','Hằng tháng'][i]}</button>
           ))}
         </div>
@@ -168,7 +173,7 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
               <div className="grid grid-cols-5 gap-1.5">
                 {[1,2,3,4,5].map(n => (
                   <button key={n} onClick={() => toggleDay(n)}
-                    className={cn('aspect-square rounded-xl font-extrabold text-[13px] transition-all',
+                    className={cn('aspect-square min-h-11 rounded-xl px-2 font-extrabold text-[13px] transition-all',
                       plan.freqDays.includes(n) ? 'bg-ink-1 text-white shadow-sm' : 'bg-canvas text-ink-3'
                     )}
                   >{freqHelpers.weekLabel(n)}</button>
@@ -185,7 +190,7 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
               <div className="grid gap-1" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
                 {Array.from({ length: 31 }, (_, i) => i + 1).map(n => (
                   <button key={n} onClick={() => toggleDay(n)}
-                    className={cn('aspect-square rounded-lg mono-num font-extrabold text-[12px] transition-all',
+                    className={cn('aspect-square min-h-9 rounded-lg px-1 mono-num font-extrabold text-[12px] transition-all',
                       plan.freqDays.includes(n) ? 'bg-ink-1 text-white shadow-sm' : 'bg-canvas text-ink-3'
                     )}
                   >{n}</button>
@@ -206,25 +211,32 @@ function StepGoal({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft) 
           <span className="text-[11px] text-ink-3 font-bold mono-num">{plan.duration ? `${plan.duration} năm` : 'không giới hạn'}</span>
         </div>
         <div className="bg-canvas rounded-xl p-1 flex mt-2.5">
-          <button onClick={() => setPlan({ ...plan, duration: null })}
-            className={cn('flex-1 py-2 rounded-lg font-extrabold text-[13px] transition-all',
-              plan.duration === null ? 'bg-white text-ink-1 shadow-sm' : 'text-ink-3'
-            )}
+          <button
+            onClick={() => setPlan({ ...plan, duration: null })}
+            data-active={plan.duration === null}
+            className="seg-option flex-1"
           >Liên tục</button>
-          <button onClick={() => setPlan({ ...plan, duration: plan.duration || 5 })}
-            className={cn('flex-1 py-2 rounded-lg font-extrabold text-[13px] transition-all',
-              plan.duration !== null ? 'bg-white text-ink-1 shadow-sm' : 'text-ink-3'
-            )}
+          <button
+            onClick={() => setPlan({ ...plan, duration: plan.duration || 5 })}
+            data-active={plan.duration !== null}
+            className="seg-option flex-1"
           >Có thời hạn</button>
         </div>
         {plan.duration !== null && (
-          <div className="flex gap-1.5 flex-wrap mt-3">
+          <div className="grid grid-cols-3 gap-2 mt-3">
             {YEARS.map(y => (
-              <button key={y} onClick={() => setPlan({ ...plan, duration: y })}
-                className={cn('px-3 py-1.5 rounded-full text-[12px] font-extrabold transition-colors',
-                  plan.duration === y ? 'bg-ink-1 text-white' : 'bg-canvas text-ink-2'
+              <button
+                key={y}
+                onClick={() => setPlan({ ...plan, duration: y })}
+                className={cn(
+                  'min-h-11 rounded-xl border-2 text-[12px] font-extrabold transition-all',
+                  plan.duration === y
+                    ? 'border-grass-500 bg-grass-50 text-grass-800 shadow-sm'
+                    : 'border-gray-200 bg-canvas text-ink-3 hover:border-grass-300 hover:bg-white'
                 )}
-              >{y} năm</button>
+              >
+                {y} năm
+              </button>
             ))}
           </div>
         )}
@@ -327,7 +339,7 @@ function StepAssets({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft
           <div className="grid grid-cols-3 gap-1.5">
             {PRESETS.map(r => (
               <button key={r.name} onClick={() => setPlan({ ...plan, allocation: r.items })}
-                className="bg-canvas rounded-xl py-2 px-1 text-center active:scale-95 active:bg-grass-50 transition-all"
+                className="min-h-[74px] bg-canvas rounded-xl py-3 px-2 text-center active:scale-95 active:bg-grass-50 transition-all"
               >
                 <div className="text-xl leading-none">{r.emoji}</div>
                 <div className="font-extrabold text-[11px] text-ink-1 mt-1">{r.name}</div>
@@ -361,7 +373,7 @@ function StepAssets({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft
                       </div>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         <span className="mono-num font-black text-[14px]" style={{ color: shade(asset.color, -15) }}>{a.pct}%</span>
-                        <button onClick={() => toggle(asset)} className="w-6 h-6 grid place-items-center text-ink-4 active:text-red-500 text-lg leading-none">×</button>
+                        <button onClick={() => toggle(asset)} className="w-8 h-8 rounded-full grid place-items-center text-ink-4 active:text-red-500 text-lg leading-none hover:bg-red-50">×</button>
                       </div>
                     </div>
                     <input type="range" min="0" max="100" value={a.pct}
@@ -382,17 +394,20 @@ function StepAssets({ plan, setPlan }: { plan: PlanDraft; setPlan: (p: PlanDraft
             <div className="text-[10px] font-extrabold text-ink-3 tracking-[0.14em] uppercase mb-2">Thêm tài sản</div>
             <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2" style={{ scrollbarWidth: 'none' }}>
               {CAT_FILTERS.map(c => (
-                <button key={c.id} onClick={() => setCatFilter(c.id)}
-                  className={cn('px-3 py-1.5 rounded-full text-[11px] font-extrabold transition-colors whitespace-nowrap flex-shrink-0',
-                    catFilter === c.id ? 'bg-ink-1 text-white' : 'bg-white text-ink-2 border border-gray-200'
-                  )}
-                >{c.label}</button>
+                <Chip
+                  key={c.id}
+                  active={catFilter === c.id}
+                  onClick={() => setCatFilter(c.id)}
+                  className="flex-shrink-0 text-[11px]"
+                >
+                  {c.label}
+                </Chip>
               ))}
             </div>
             <div className="flex flex-col gap-1.5">
               {available.map(a => (
                 <button key={a.id} onClick={() => toggle(a)}
-                  className="bg-white rounded-xl p-2 flex items-center gap-2.5 active:scale-[0.98] active:bg-grass-50 transition-all border border-gray-100"
+                  className="min-h-[56px] bg-white rounded-xl px-3 py-2.5 flex items-center gap-3 active:scale-[0.98] active:bg-grass-50 transition-all border border-gray-100"
                 >
                   <AssetLogo asset={a} size={32} />
                   <div className="flex-1 min-w-0 text-left">

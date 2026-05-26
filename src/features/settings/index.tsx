@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
 import { fmtVND } from '@/lib/utils'
+import Button from '@/components/ui/Button'
 
 const NOTIF_ITEMS = [
   { id: 'dca',       label: 'Nhắc đến hạn DCA',      sub: 'Nhắc trước 1 ngày' },
@@ -48,12 +49,14 @@ export default function Settings() {
             <div className="font-extrabold text-[15px] text-ink-1">Người dùng Mầm</div>
             <div className="text-[12px] text-ink-3 font-semibold truncate">Đã đăng nhập</div>
           </div>
-          <button
+          <Button
+            variant="soft"
+            size="sm"
             onClick={() => dispatch({ type: 'logout' })}
-            className="text-[12px] font-bold text-red-500 px-3 py-1.5 rounded-xl bg-red-50 flex-shrink-0"
+            className="flex-shrink-0 rounded-xl bg-red-50 px-4 text-[12px] text-red-500 hover:bg-red-100"
           >
             Đăng xuất
-          </button>
+          </Button>
         </div>
       ) : (
         <div
@@ -65,12 +68,14 @@ export default function Settings() {
           <p className="text-[12px] text-white/70 mb-3 leading-snug">
             Đăng nhập để lưu kế hoạch và theo dõi danh mục trên mọi thiết bị.
           </p>
-          <button
+          <Button
+            variant="white"
+            size="sm"
             onClick={() => dispatch({ type: 'go', screen: 'login' })}
-            className="bg-white text-emerald-800 font-extrabold text-[13px] px-4 py-2 rounded-xl active:scale-[0.98] transition-transform"
+            className="rounded-xl px-5 text-[13px] text-emerald-800 shadow-none"
           >
             Đăng nhập / Tạo tài khoản
-          </button>
+          </Button>
         </div>
       )}
 
@@ -146,19 +151,21 @@ export default function Settings() {
             })}
           </div>
         )}
-        <button
+        <Button
+          variant="soft"
+          size="md"
           onClick={() => dispatch({ type: 'go', screen: 'create' })}
-          className="w-full py-2.5 rounded-xl bg-grass-50 text-grass-700 font-extrabold text-[13px]"
+          className="w-full rounded-xl text-[13px]"
         >
           + Thêm kế hoạch mới
-        </button>
+        </Button>
       </div>
 
       {/* Danger zone — auth only */}
       {auth && (
         <div className="bg-white rounded-2xl shadow-card p-4 border border-red-100">
           <div className="font-extrabold text-[14px] text-red-500 mb-2">⚠️ Vùng nguy hiểm</div>
-          <button className="text-[13px] font-bold text-red-500 underline underline-offset-2">
+          <button className="inline-flex min-h-9 items-center rounded-full px-2 text-[13px] font-bold text-red-500 underline underline-offset-2">
             Xoá tài khoản và dữ liệu
           </button>
         </div>

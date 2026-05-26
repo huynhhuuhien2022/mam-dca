@@ -161,7 +161,7 @@ export default function AssetDetail() {
               ))}
             </div>
 
-            <Button size="lg" className="w-full mt-5" onClick={startDCA}>
+            <Button variant="magic" size="lg" className="w-full mt-5" onClick={startDCA}>
               + Tạo kế hoạch với {asset.id}
             </Button>
           </div>
