@@ -6,16 +6,25 @@ import Button from '@/components/ui/Button'
 import { getSupabaseClient } from '@/lib/supabase'
 import type { LoginMode } from '@/lib/types'
 
+function fmtPhone(s: string): string {
+  const d = s.replace(/\D/g, '').slice(0, 10)
+  if (d.length <= 3) return d
+  if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
+  return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
+}
+
 export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
   const dispatch = useAppStore(s => s.dispatch)
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const phoneDigits = phone.replace(/\D/g, '')
+  const phoneE164 = `+84${phoneDigits.replace(/^0/, '')}`
+  const phoneValid = phoneDigits.length >= 9 && phoneDigits.length <= 10
   const passValid = password.length >= 6
-  const canSubmit = emailValid && passValid && !busy
+  const canSubmit = phoneValid && passValid && !busy
 
   const goBack = () => dispatch({ type: 'go', screen: 'dashboard' })
 
@@ -25,7 +34,7 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
     try {
       const supabase = getSupabaseClient()
       const { error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        phone: phoneE164,
         password,
       })
       if (authError) throw authError
@@ -45,11 +54,11 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
     try {
       const supabase = getSupabaseClient()
       const { error: authError } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
+        phone: phoneE164,
         password,
       })
       if (authError) throw authError
-      dispatch({ type: 'showToast', toast: { icon: '✓', message: 'Tạo tài khoản thành công. Vui lòng kiểm tra email xác nhận.' } })
+      dispatch({ type: 'showToast', toast: { icon: '✓', message: 'Tạo tài khoản thành công' } })
       dispatch({ type: 'go', screen: 'login' })
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Tạo tài khoản thất bại'
@@ -108,7 +117,7 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
           {mode === 'signup' ? 'Tạo tài khoản' : 'Đăng nhập'}
         </div>
         <div className="text-[26px] font-black text-ink-1 tracking-tight leading-tight mt-1.5">
-          Email & mật khẩu
+          Số điện thoại
         </div>
         <div className="text-[13.5px] text-ink-3 font-semibold mt-1.5 leading-snug">
           {mode === 'signup'
@@ -116,15 +125,20 @@ export default function Login({ mode = 'login' }: { mode?: LoginMode }) {
             : 'Đăng nhập để lưu kế hoạch và đồng bộ trên nhiều thiết bị.'}
         </div>
 
-        {/* Email input */}
+        {/* Phone input */}
         <div className="bg-white rounded-2xl shadow-card mt-5 flex items-center overflow-hidden">
+          <div className="px-3.5 py-3.5 flex items-center gap-2 border-r border-line-soft flex-shrink-0">
+            <span className="text-base leading-none">🇻🇳</span>
+            <span className="font-extrabold text-[15px] mono-num">+84</span>
+          </div>
           <input
-            type="email"
+            type="tel"
+            inputMode="numeric"
             autoFocus
-            placeholder="you@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="flex-1 min-w-0 px-3.5 py-3.5 bg-transparent border-0 outline-none focus:outline-none font-extrabold text-[16px] text-ink-1 placeholder:text-ink-4 placeholder:font-semibold tracking-wide"
+            placeholder="9xx xxx xxxx"
+            value={phone}
+            onChange={e => setPhone(fmtPhone(e.target.value))}
+            className="flex-1 min-w-0 px-3.5 py-3.5 bg-transparent border-0 outline-none focus:outline-none font-extrabold text-[18px] mono-num text-ink-1 placeholder:text-ink-4 placeholder:font-semibold tracking-wide"
           />
         </div>
         <div className="bg-white rounded-2xl shadow-card mt-2.5 flex items-center overflow-hidden">
