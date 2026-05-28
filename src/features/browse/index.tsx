@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
 import { fmtPct, cn } from '@/lib/utils'
 import AssetLogo from '@/components/ui/AssetLogo'
-import Sparkline from '@/components/charts/Sparkline'
 import RiskBadge from '@/components/ui/RiskBadge'
 import Chip from '@/components/ui/Chip'
 import Button from '@/components/ui/Button'
@@ -129,9 +128,6 @@ export default function Browse() {
                     </span>
                   </div>
                   <div className="text-[11px] text-ink-3 truncate mt-0.5">{asset.name} · {asset.sub}</div>
-                </div>
-                <div className="hidden sm:block flex-shrink-0">
-                  <Sparkline data={asset.spark} color={asset.ytd >= 0 ? '#22C55E' : '#EF4444'} width={90} height={32} />
                 </div>
                 <div className={cn('w-[55px] text-right font-extrabold text-[14px] whitespace-nowrap flex-shrink-0',
                   asset.ytd >= 0 ? 'text-grass-600' : 'text-red-500'

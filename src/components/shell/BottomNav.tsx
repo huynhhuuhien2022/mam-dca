@@ -18,7 +18,7 @@ const TAB_ITEMS: TabItem[] = [
   { id: 'browse',    icon: 'compass', label: 'Khám phá' },
   { id: 'create',    icon: 'plus',    fab: true },
   { id: 'history',   icon: 'history', label: 'Lịch sử' },
-  { id: 'settings',  icon: 'gear',    label: 'Cài đặt' },
+  { id: 'profile',   icon: 'person',  label: 'Profile' },
 ]
 
 const SCREEN_TO_TAB: Partial<Record<Screen, Screen>> = {
@@ -28,7 +28,8 @@ const SCREEN_TO_TAB: Partial<Record<Screen, Screen>> = {
   create:    'create',
   calc:      'create',
   history:   'history',
-  settings:  'settings',
+  profile:   'profile',
+  profileEdit: 'profile',
 }
 
 export default function BottomNav() {

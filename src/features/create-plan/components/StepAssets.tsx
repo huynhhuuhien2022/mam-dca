@@ -28,6 +28,7 @@ export default function StepAssets({
   const [catFilter, setCatFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [showAssetPicker, setShowAssetPicker] = useState(false);
+  const [recentAddedId, setRecentAddedId] = useState<string | null>(null);
   const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>({});
   const [riskInsight, setRiskInsight] = useState<{
     preset: string;
@@ -57,6 +58,31 @@ export default function StepAssets({
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!showAssetPicker) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowAssetPicker(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showAssetPicker]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const prev = document.body.style.overflow;
+    if (showAssetPicker) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = prev || "";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [showAssetPicker, mounted]);
+
+  useEffect(() => {
+    if (!recentAddedId) return;
+    const t = window.setTimeout(() => setRecentAddedId(null), 4500);
+    return () => window.clearTimeout(t);
+  }, [recentAddedId]);
+
   function rebalance(alloc: Allocation[]): Allocation[] {
     if (!alloc.length) return alloc;
     const even = Math.floor(100 / alloc.length);
@@ -73,6 +99,7 @@ export default function StepAssets({
         ...plan,
         allocation: rebalance([...plan.allocation, { id: asset.id, pct: 0 }]),
       });
+      setRecentAddedId(asset.id);
       setShowAssetPicker(false);
       setSearch("");
     }
@@ -269,6 +296,11 @@ export default function StepAssets({
                         <span className="font-extrabold text-[13px] flex-shrink-0">
                           {asset.id}
                         </span>
+                        {recentAddedId === a.id && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-grass-600 text-white text-[10px] font-extrabold flex-shrink-0">
+                            Mới thêm
+                          </span>
+                        )}
                         <span className="text-[11px] text-ink-3 truncate">
                           · {asset.name}
                         </span>
@@ -355,7 +387,7 @@ export default function StepAssets({
             onClick={() => setShowAssetPicker(false)}
           >
             <div
-              className="w-[min(92vw,560px)] bg-white rounded-2xl shadow-xl p-4 max-h-[82vh] overflow-hidden flex flex-col"
+              className="w-[min(92vw,420px)] bg-white rounded-2xl shadow-xl p-4 max-h-[82vh] overflow-hidden flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-2">

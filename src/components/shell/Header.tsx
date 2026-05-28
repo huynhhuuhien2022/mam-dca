@@ -2,7 +2,14 @@
 
 import Button from "@/components/ui/Button";
 import { useAppStore } from "@/lib/store";
+import type { Screen } from "@/lib/types";
 import { useShallow } from "zustand/react/shallow";
+
+const SUBPAGE_HEADER: Partial<
+  Record<Screen, { title: string; backTo: Screen }>
+> = {
+  profileEdit: { title: "Cập nhật hồ sơ", backTo: "profile" },
+};
 
 export default function Header() {
   const { auth, screen, dispatch } = useAppStore(
@@ -12,6 +19,25 @@ export default function Header() {
       dispatch: s.dispatch,
     })),
   );
+
+  const subpage = SUBPAGE_HEADER[screen];
+  if (subpage) {
+    return (
+      <header className="flex items-center justify-between px-4 pt-12 pb-3 bg-white border-b border-gray-200">
+        <button
+          onClick={() => dispatch({ type: "go", screen: subpage.backTo })}
+          className="w-9 h-9 grid place-items-center text-[20px] font-black text-ink-2"
+          aria-label="Quay lại"
+        >
+          ←
+        </button>
+        <div className="text-[16px] font-black tracking-tight">
+          {subpage.title}
+        </div>
+        <span className="w-[68px]" />
+      </header>
+    );
+  }
 
   return (
     <>
@@ -58,7 +84,7 @@ export default function Header() {
           {/* Auth button */}
           {auth ? (
             <button
-              onClick={() => dispatch({ type: "go", screen: "settings" })}
+              onClick={() => dispatch({ type: "go", screen: "profile" })}
               className="w-9 h-9 rounded-xl brand-soft text-grass-900 grid place-items-center font-black text-[13px] active:scale-95 transition-transform"
             >
               MN

@@ -1,5 +1,4 @@
 import AssetLogo from '@/components/ui/AssetLogo'
-import Sparkline from '@/components/charts/Sparkline'
 import Button from '@/components/ui/Button'
 import { fmtPct } from '@/lib/utils'
 import type { Asset, AppAction } from '@/lib/types'
@@ -23,10 +22,6 @@ export default function AssetRow({ asset, dispatch }: AssetRowProps) {
           <span className="text-[11px] text-ink-3 font-bold truncate">· {asset.name}</span>
         </div>
         <div className="text-[11px] text-ink-3 truncate">{asset.sub}</div>
-      </div>
-
-      <div className="flex-shrink-0 hidden sm:block">
-        <Sparkline data={asset.spark} color={asset.ytd >= 0 ? '#22C55E' : '#EF4444'} width={90} height={32} />
       </div>
 
       <div className="text-right flex-shrink-0">

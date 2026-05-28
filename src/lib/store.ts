@@ -40,7 +40,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   plans: [],
   totalValue,
   totalInvested,
-  streak: 14,
+  streak: 0,
   prefill: null,
   pendingAction: null,
   returnScreen: null,
@@ -62,6 +62,12 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
 
     case 'setAssets':
       return { assets: action.assets }
+
+    case 'setPlans':
+      return { plans: action.plans, ...derivePortfolio(action.plans) }
+
+    case 'setStreak':
+      return { streak: Math.max(0, Math.floor(action.streak || 0)) }
 
     case 'requireAuth': {
       const authScreens: Screen[] = ['login', 'signup']
@@ -94,17 +100,18 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
       return { auth: action.value }
 
     case 'logout':
-      return { auth: false, screen: 'login', returnScreen: null, pendingAction: null }
+      return { auth: false, screen: 'login', returnScreen: null, pendingAction: null, plans: [], streak: 0, ...derivePortfolio([]) }
 
     case 'addPlan': {
       const newPlan: Plan = {
-        id: 'p' + (state.plans.length + 1),
+        id: action.id || ('p' + (state.plans.length + 1)),
         name: action.plan.name,
         emoji: action.plan.emoji,
         amount: action.plan.amount,
         freq: action.plan.freq,
         freqDays: action.plan.freqDays ?? [],
         duration: action.plan.duration ?? null,
+        createdAt: new Date().toISOString(),
         allocation: action.plan.allocation,
         startMonth: 0,
         totalInvested: 0,

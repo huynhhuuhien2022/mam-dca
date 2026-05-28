@@ -11,6 +11,8 @@ export default function StreakBanner() {
     totalValue: s.totalValue,
   })))
 
+  if (streak < 10) return null
+
   return (
     <div className="px-4 pb-2">
       <div

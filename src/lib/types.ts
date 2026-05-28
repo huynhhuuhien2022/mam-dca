@@ -37,6 +37,7 @@ export interface Plan {
   freq: Freq
   freqDays: number[]
   duration: number | null
+  createdAt?: string
   allocation: Allocation[]
   startMonth: number
   totalInvested: number
@@ -51,7 +52,8 @@ export type Screen =
   | 'create'
   | 'calc'
   | 'history'
-  | 'settings'
+  | 'profile'
+  | 'profileEdit'
   | 'login'
   | 'signup'
 
@@ -66,10 +68,12 @@ export interface ToastPayload {
 export type AppAction =
   | { type: 'go'; screen: Screen; assetId?: string; prefill?: Partial<Plan> }
   | { type: 'setAssets'; assets: Asset[] }
+  | { type: 'setPlans'; plans: Plan[] }
+  | { type: 'setStreak'; streak: number }
   | { type: 'requireAuth'; pending?: AppAction }
   | { type: 'login' }
   | { type: 'setAuth'; value: boolean }
   | { type: 'logout' }
-  | { type: 'addPlan'; plan: Omit<Plan, 'id' | 'startMonth' | 'totalInvested' | 'currentValue'> }
+  | { type: 'addPlan'; plan: Omit<Plan, 'id' | 'startMonth' | 'totalInvested' | 'currentValue'>; id?: string }
   | { type: 'showToast'; toast: ToastPayload }
   | { type: 'clearToast' }

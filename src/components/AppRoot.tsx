@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
 import { getSupabaseClient } from '@/lib/supabase'
-import type { Asset, RiskLevel } from '@/lib/types'
+import type { Asset, Plan, RiskLevel } from '@/lib/types'
 import AppShell from './shell/AppShell'
 import Dashboard   from '@/features/dashboard'
 import Browse      from '@/features/browse'
@@ -11,7 +11,8 @@ import AssetDetail from '@/features/asset-detail'
 import CreatePlan  from '@/features/create-plan'
 import Calculator  from '@/features/calculator'
 import History     from '@/features/history'
-import Settings    from '@/features/settings'
+import Profile     from '@/features/settings'
+import ProfileEdit from '@/features/profile-edit'
 import Login       from '@/features/auth'
 import Toast       from '@/components/ui/Toast'
 import type { Screen } from '@/lib/types'
@@ -61,6 +62,7 @@ function mapTypeToCat(typeCode: string | null | undefined): Asset['cat'] {
 
 export default function AppRoot() {
   const screen = useAppStore(s => s.screen)
+  const auth = useAppStore(s => s.auth)
   const dispatch = useAppStore(s => s.dispatch)
 
   useEffect(() => {
@@ -159,6 +161,110 @@ export default function AppRoot() {
     }
   }, [dispatch])
 
+  useEffect(() => {
+    let active = true
+
+    if (!auth) {
+      dispatch({ type: 'setPlans', plans: [] })
+      dispatch({ type: 'setStreak', streak: 0 })
+      return () => {
+        active = false
+      }
+    }
+
+    ;(async () => {
+      try {
+        const supabase = getSupabaseClient()
+        const { data, error } = await supabase
+          .from('user_plans')
+          .select(`
+            id, name, emoji, amount, freq, freq_days, duration_years, start_month, total_invested, current_value, created_at,
+            user_plan_allocations(asset_symbol, pct, position)
+          `)
+          .order('created_at', { ascending: false })
+
+        if (error || !data || !active) return
+
+        const mapped: Plan[] = data.map((row) => {
+          const allocations = ((row as { user_plan_allocations?: Array<{ asset_symbol: string; pct: number; position: number }> }).user_plan_allocations ?? [])
+            .slice()
+            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+            .map((a) => ({ id: a.asset_symbol, pct: Number(a.pct ?? 0) }))
+
+          return {
+            id: row.id,
+            name: row.name,
+            emoji: row.emoji || '🌱',
+            amount: Number(row.amount ?? 0),
+            freq: row.freq,
+            freqDays: (row.freq_days ?? []) as number[],
+            duration: row.duration_years ?? null,
+            createdAt: row.created_at,
+            allocation: allocations,
+            startMonth: Number(row.start_month ?? 0),
+            totalInvested: Number(row.total_invested ?? 0),
+            currentValue: Number(row.current_value ?? 0),
+          }
+        })
+
+        dispatch({ type: 'setPlans', plans: mapped })
+      } catch {
+        // ignore in local/demo mode
+      }
+    })()
+
+    return () => {
+      active = false
+    }
+  }, [auth, dispatch])
+
+  useEffect(() => {
+    let active = true
+    if (!auth) {
+      dispatch({ type: 'setStreak', streak: 0 })
+      return () => {
+        active = false
+      }
+    }
+
+    ;(async () => {
+      try {
+        const supabase = getSupabaseClient()
+        const { data, error } = await supabase
+          .from('user_streak_months')
+          .select('success_month')
+          .order('success_month', { ascending: false })
+          .limit(120)
+
+        if (error || !data || !active) return
+        const months = new Set(
+          data
+            .map((r) => r.success_month)
+            .filter((d): d is string => Boolean(d)),
+        )
+
+        let streak = 0
+        const cursor = new Date()
+        cursor.setDate(1)
+        cursor.setHours(0, 0, 0, 0)
+        while (true) {
+          const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-01`
+          if (!months.has(key)) break
+          streak += 1
+          cursor.setMonth(cursor.getMonth() - 1)
+        }
+
+        dispatch({ type: 'setStreak', streak })
+      } catch {
+        // ignore in local/demo mode
+      }
+    })()
+
+    return () => {
+      active = false
+    }
+  }, [auth, dispatch])
+
   if (AUTH_SCREENS.includes(screen)) {
     return (
       <>
@@ -190,7 +296,8 @@ function getPage(screen: Screen, layout: 'A' | 'B') {
     case 'create':    return CreatePlan
     case 'calc':      return Calculator
     case 'history':   return History
-    case 'settings':  return Settings
+    case 'profile':   return Profile
+    case 'profileEdit': return ProfileEdit
     default:          return () => <Dashboard layout={layout} />
   }
 }

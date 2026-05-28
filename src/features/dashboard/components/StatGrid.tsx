@@ -43,7 +43,7 @@ export default function StatGrid({ totalInvested, profit, profitPct, streak, fmt
     <div className="grid grid-cols-2 gap-2 mt-5">
       <StatCard icon="coin"   label="Đã đầu tư" value={fmtVND(totalInvested)} sub="Tổng vốn vào" />
       <StatCard icon="growth" label="Lợi nhuận" value={fmtVND(profit)} sub={fmtPct(profitPct)} positive={profit >= 0} />
-      <StatCard icon="fire"   label="Streak"    value={`${streak} tháng`} sub="Liên tục DCA" />
+      <StatCard icon="fire"   label="Streak"    value={`${streak} tháng`} sub="Tháng đã DCA" />
       <StatCard icon="trophy" label="Milestone" value="3 / 8" sub="Đã đạt" />
     </div>
   )

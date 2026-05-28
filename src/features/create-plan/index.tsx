@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import Button from '@/components/ui/Button'
 import { useAppStore } from '@/lib/store'
+import { getSupabaseClient } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 import Stepper from './components/Stepper'
 import StepGoal from './components/StepGoal'
@@ -24,6 +25,7 @@ export default function CreatePlan() {
   const initial = prefill ?? {}
 
   const [step, setStep] = useState(0)
+  const [savingPlan, setSavingPlan] = useState(false)
   const [plan, setPlan] = useState<PlanDraft>({
     name: '',
     emoji: '🌱',
@@ -39,7 +41,7 @@ export default function CreatePlan() {
     (step === 1 && plan.allocation.length > 0 && Math.abs(plan.allocation.reduce((s, a) => s + a.pct, 0) - 100) < 0.01) ||
     step === 2
 
-  function handleNext() {
+  async function handleNext() {
     if (step === 2) {
       if (!auth) {
         dispatch({
@@ -52,7 +54,59 @@ export default function CreatePlan() {
         return
       }
 
-      dispatch({ type: 'addPlan', plan: { ...plan, freqDays: plan.freqDays.length ? plan.freqDays : [1] } })
+      try {
+        setSavingPlan(true)
+        const safePlan = { ...plan, freqDays: plan.freqDays.length ? plan.freqDays : [1] }
+        const supabase = getSupabaseClient()
+        const { data: userRes, error: userErr } = await supabase.auth.getUser()
+        if (userErr || !userRes.user) {
+          dispatch({ type: 'showToast', toast: { message: 'Phiên đăng nhập không hợp lệ', icon: '!' } })
+          return
+        }
+
+        const { data: planRow, error: planErr } = await supabase
+          .from('user_plans')
+          .insert({
+            user_id: userRes.user.id,
+            name: safePlan.name,
+            emoji: safePlan.emoji,
+            amount: safePlan.amount,
+            freq: safePlan.freq,
+            freq_days: safePlan.freqDays,
+            duration_years: safePlan.duration,
+          })
+          .select('id')
+          .single()
+
+        if (planErr || !planRow) {
+          dispatch({ type: 'showToast', toast: { message: 'Không thể tạo kế hoạch', icon: '!' } })
+          return
+        }
+
+        const allocations = safePlan.allocation.map((a, i) => ({
+          plan_id: planRow.id,
+          asset_symbol: a.id,
+          pct: a.pct,
+          position: i,
+        }))
+
+        const { error: allocErr } = await supabase
+          .from('user_plan_allocations')
+          .insert(allocations)
+
+        if (allocErr) {
+          await supabase.from('user_plans').delete().eq('id', planRow.id)
+          dispatch({ type: 'showToast', toast: { message: 'Không thể lưu phân bổ kế hoạch', icon: '!' } })
+          return
+        }
+
+        dispatch({ type: 'addPlan', id: planRow.id, plan: safePlan })
+      } catch {
+        dispatch({ type: 'showToast', toast: { message: 'Không thể tạo kế hoạch', icon: '!' } })
+        return
+      } finally {
+        setSavingPlan(false)
+      }
     }
 
     setStep((s) => Math.min(3, s + 1))
@@ -81,8 +135,8 @@ export default function CreatePlan() {
           ) : (
             <span />
           )}
-          <Button size="lg" disabled={!canNext} className={cn('flex-1', !canNext ? 'opacity-50 cursor-not-allowed' : '')} onClick={handleNext}>
-            {step === 2 ? (auth ? 'Bắt đầu DCA ✨' : 'Đăng nhập để bắt đầu →') : 'Tiếp theo →'}
+          <Button size="lg" disabled={!canNext || savingPlan} className={cn('flex-1', (!canNext || savingPlan) ? 'opacity-50 cursor-not-allowed' : '')} onClick={handleNext}>
+            {step === 2 ? (savingPlan ? 'Đang tạo...' : auth ? 'Bắt đầu DCA ✨' : 'Đăng nhập để bắt đầu →') : 'Tiếp theo →'}
           </Button>
         </div>
       )}

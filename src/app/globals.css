@@ -303,3 +303,13 @@ svg { max-width: 100%; }
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover { background: #B2B8B4; }
+
+/* Hide native date picker icon when using custom calendar icon */
+.calendar-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 2.5rem;
+  height: 100%;
+  cursor: pointer;
+}

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
-import { fmtVND } from '@/lib/utils'
 import Button from '@/components/ui/Button'
+import { getSupabaseClient } from '@/lib/supabase'
 
 const NOTIF_ITEMS = [
   { id: 'dca',       label: 'Nhắc đến hạn DCA',      sub: 'Nhắc trước 1 ngày' },
@@ -32,35 +32,74 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 }
 
 export default function Settings() {
-  const { auth, plans, dispatch } = useAppStore(useShallow(s => ({
+  const { auth, dispatch } = useAppStore(useShallow(s => ({
     auth: s.auth,
-    plans: s.plans,
     dispatch: s.dispatch,
   })))
+  const [displayName, setDisplayName] = useState('Người dùng Mầm')
+  const [joinedDays, setJoinedDays] = useState(1)
   const [notifs, setNotifs] = useState<Record<string, boolean>>({
     dca: true, market: false, milestone: true, weekly: true, tips: false,
   })
+
+  useEffect(() => {
+    let active = true
+    if (!auth) {
+      setDisplayName('Người dùng Mầm')
+      setJoinedDays(1)
+      return () => {
+        active = false
+      }
+    }
+
+    ;(async () => {
+      try {
+        const supabase = getSupabaseClient()
+        const { data, error } = await supabase.auth.getUser()
+        if (error || !data.user || !active) return
+        const meta = data.user.user_metadata as { full_name?: string } | null
+        const safeName = meta?.full_name?.trim() || 'Người dùng Mầm'
+        const createdAt = data.user.created_at ? new Date(data.user.created_at).getTime() : Date.now()
+        const diffMs = Math.max(0, Date.now() - createdAt)
+        const days = Math.max(1, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
+        setDisplayName(safeName)
+        setJoinedDays(days)
+      } catch {
+        if (active) {
+          setDisplayName('Người dùng Mầm')
+          setJoinedDays(1)
+        }
+      }
+    })()
+
+    return () => {
+      active = false
+    }
+  }, [auth])
 
   return (
     <div className="fade-up py-4 flex flex-col gap-4">
       {/* Profile / Guest card */}
       {auth ? (
-        <div className="bg-white rounded-2xl shadow-card p-4 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-grass-400 to-grass-600 grid place-items-center text-2xl flex-shrink-0">
-            🌱
+        <div className="flex flex-col gap-2.5">
+          <div className="bg-white rounded-2xl shadow-card p-4 flex items-center gap-3 relative">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-grass-400 to-grass-600 grid place-items-center text-2xl flex-shrink-0">
+              🌱
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="font-extrabold text-[15px] text-ink-1 truncate">{displayName}</div>
+              <div className="text-[12px] text-ink-3 font-semibold truncate">Đã tham gia: {joinedDays} ngày</div>
+            </div>
+            <button
+              onClick={() => dispatch({ type: 'go', screen: 'profileEdit' })}
+              className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-grass-50 text-grass-700 grid place-items-center border border-grass-100 active:scale-95"
+              aria-label="Cập nhật hồ sơ"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M4 20h4l10-10a2.2 2.2 0 1 0-3.1-3.1L4.8 16.9 4 20Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="font-extrabold text-[15px] text-ink-1">Người dùng Mầm</div>
-            <div className="text-[12px] text-ink-3 font-semibold truncate">Đã đăng nhập</div>
-          </div>
-          <Button
-            variant="soft"
-            size="sm"
-            onClick={() => dispatch({ type: 'logout' })}
-            className="flex-shrink-0 rounded-xl bg-red-50 px-4 text-[12px] text-red-500 hover:bg-red-100"
-          >
-            Đăng xuất
-          </Button>
         </div>
       ) : (
         <div
@@ -129,49 +168,31 @@ export default function Settings() {
         ))}
       </div>
 
-      {/* Plans summary */}
-      <div className="bg-white rounded-2xl shadow-card p-4">
-        <div className="font-extrabold text-[14px] text-ink-1 mb-3">📋 Kế hoạch DCA</div>
-        {plans.length === 0 ? (
-          <div className="text-[12px] text-ink-3 font-semibold text-center py-3">
-            Chưa có kế hoạch nào.
-          </div>
-        ) : (
-          <div className="flex flex-col gap-1.5 mb-3">
-            {plans.map(p => {
-              const ret = p.currentValue - p.totalInvested
-              return (
-                <div key={p.id} className="flex items-center gap-2.5">
-                  <span className="text-lg">{p.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-[13px] text-ink-1 truncate">{p.name}</div>
-                    <div className="text-[11px] text-ink-3">{fmtVND(p.currentValue)}</div>
-                  </div>
-                  <div className={`text-[11px] font-bold flex-shrink-0 ${ret >= 0 ? 'text-grass-600' : 'text-red-500'}`}>
-                    {ret >= 0 ? '+' : ''}{((ret / (p.totalInvested || 1)) * 100).toFixed(1)}%
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-        <Button
-          variant="soft"
-          size="md"
-          onClick={() => dispatch({ type: 'go', screen: 'create' })}
-          className="w-full rounded-xl text-[13px]"
-        >
-          + Thêm kế hoạch mới
-        </Button>
-      </div>
-
       {/* Danger zone — auth only */}
       {auth && (
-        <div className="bg-white rounded-2xl shadow-card p-4 border border-red-100">
-          <div className="font-extrabold text-[14px] text-red-500 mb-2">⚠️ Vùng nguy hiểm</div>
-          <button className="inline-flex min-h-9 items-center rounded-full px-2 text-[13px] font-bold text-red-500 underline underline-offset-2">
-            Xoá tài khoản và dữ liệu
-          </button>
+        <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+          <div className="px-4 pt-4 pb-2">
+            <div className="font-extrabold text-[14px] text-red-500">⚠️ Vùng nguy hiểm</div>
+          </div>
+          <div className="px-3 pb-3 flex flex-col gap-2">
+            <button
+              onClick={() => dispatch({ type: 'logout' })}
+              className="w-full flex items-center gap-3 px-3.5 py-3.5 min-h-[62px] rounded-xl border border-red-100 active:bg-red-50/60 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 grid place-items-center flex-shrink-0">↩</div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="font-bold text-[13px] leading-tight text-red-600">Đăng xuất</div>
+                <div className="text-[11px] leading-tight text-ink-3 mt-1">Thoát tài khoản trên thiết bị này</div>
+              </div>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3.5 py-3.5 min-h-[62px] rounded-xl border border-red-100 active:bg-red-50/60 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 grid place-items-center flex-shrink-0">🗑</div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="font-bold text-[13px] leading-tight text-red-600">Xoá tài khoản và dữ liệu</div>
+                <div className="text-[11px] leading-tight text-ink-3 mt-1">Hành động vĩnh viễn, không thể hoàn tác</div>
+              </div>
+            </button>
+          </div>
         </div>
       )}
 
