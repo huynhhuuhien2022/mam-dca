@@ -19,7 +19,7 @@ export default function PlanRow({ plan, dispatch }: PlanRowProps) {
   return (
     <div
       className="flex items-center gap-3 px-3 py-2.5 rounded-2xl cursor-pointer hover:bg-canvas transition-colors"
-      onClick={() => dispatch({ type: 'go', screen: 'create' })}
+      onClick={() => dispatch({ type: 'go', screen: 'planDetail', planId: plan.id })}
     >
       {/* Emoji */}
       <div className="w-12 h-12 rounded-2xl brand-soft grid place-items-center text-2xl flex-shrink-0">

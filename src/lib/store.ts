@@ -10,6 +10,7 @@ interface AppState {
   screen: Screen
   auth: boolean
   assetId: string | null
+  planId: string | null
   assets: Asset[]
   plans: Plan[]
   totalValue: number
@@ -36,6 +37,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   screen: 'dashboard',
   auth: false,
   assetId: null,
+  planId: null,
   assets: [],
   plans: [],
   totalValue,
@@ -57,6 +59,7 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
       return {
         screen: action.screen,
         assetId: action.assetId ?? state.assetId,
+        planId: action.planId ?? state.planId,
         prefill: action.prefill ?? null,
       }
 

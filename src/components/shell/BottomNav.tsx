@@ -25,6 +25,8 @@ const SCREEN_TO_TAB: Partial<Record<Screen, Screen>> = {
   dashboard: 'dashboard',
   browse:    'browse',
   detail:    'browse',
+  planDetail: 'dashboard',
+  planHistory: 'dashboard',
   create:    'create',
   calc:      'create',
   history:   'history',

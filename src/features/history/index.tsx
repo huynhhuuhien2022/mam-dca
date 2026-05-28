@@ -141,9 +141,15 @@ async function fetchLatestPrice(assetSymbol: string): Promise<number | null> {
   return price > 0 ? price : null
 }
 
-export default function History() {
+interface HistoryProps {
+  planId?: string | null
+}
+
+export default function History({ planId = null }: HistoryProps) {
   const { plans, streak, assets, auth, dispatch } = useAppStore(useShallow(s => ({ plans: s.plans, streak: s.streak, assets: s.assets, auth: s.auth, dispatch: s.dispatch })))
   const assetMap = useMemo(() => Object.fromEntries(assets.map(a => [a.id, a])), [assets])
+  const activePlans = useMemo(() => (planId ? plans.filter((p) => p.id === planId) : plans), [planId, plans])
+  const activePlan = activePlans[0] ?? null
   const [txns, setTxns] = useState<TxRow[]>([])
   const [syncing, setSyncing] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<ConfirmTarget | null>(null)
@@ -151,7 +157,7 @@ export default function History() {
 
   useEffect(() => {
     let active = true
-    if (!auth || plans.length === 0) {
+    if (!auth || activePlans.length === 0) {
       setTxns([])
       return () => {
         active = false
@@ -162,7 +168,7 @@ export default function History() {
       try {
         setSyncing(true)
         const supabase = getSupabaseClient()
-        const dueRows = buildDueTransactions(plans)
+        const dueRows = buildDueTransactions(activePlans)
 
         for (const due of dueRows) {
           const { data: tx } = await supabase
@@ -214,7 +220,7 @@ export default function History() {
             )
         }
 
-        const { data, error } = await supabase
+        let query = supabase
           .from('user_dca_transactions')
           .select(`
             id, plan_id, due_date, total_amount, status,
@@ -223,6 +229,9 @@ export default function History() {
           `)
           .order('due_date', { ascending: false })
           .limit(200)
+        if (planId) query = query.eq('plan_id', planId)
+
+        const { data, error } = await query
 
         if (error || !data || !active) return
 
@@ -271,7 +280,7 @@ export default function History() {
     return () => {
       active = false
     }
-  }, [auth, plans, assetMap])
+  }, [auth, activePlans, assetMap, planId])
 
   async function refreshMonthlyStreak(txDate: Date) {
     const supabase = getSupabaseClient()
@@ -495,11 +504,173 @@ export default function History() {
       ? confirmTarget.item.amount
       : confirmTarget?.entries.reduce((sum, entry) => sum + entry.item.amount, 0) ?? 0
 
+  if (planId) {
+    const doneTxns = txns.filter((t) => t.status === 'success').length
+    const incompleteTxns = txns.filter((t) => t.status !== 'success').length
+
+    return (
+      <div className="fade-up px-4 pb-4 pt-3">
+        <section className="overflow-hidden rounded-[26px] bg-[linear-gradient(135deg,#0F3D25_0%,#1F8A4C_62%,#6EE7A8_100%)] p-4 text-white shadow-cta">
+          <div className="flex items-start gap-3">
+            <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-white/16 text-[26px] shadow-sm">
+              {activePlan?.emoji ?? '🌱'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[19px] font-black leading-tight tracking-tight">
+                {activePlan?.name ?? 'Kế hoạch DCA'}
+              </div>
+              <div className="mt-1 text-[11px] font-semibold leading-snug text-white/75">
+                Theo dõi từng kỳ DCA đã phát sinh của kế hoạch này
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-white/65">Tổng đã ghi nhận</div>
+            <div className="mono-num mt-1 text-[25px] font-black tracking-tight">{fmtVNDfull(totalSuccess)}</div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-2xl bg-white/14 p-2.5 ring-1 ring-white/15 backdrop-blur">
+              <div className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-[0.08em] text-white/65">
+                <span className="text-[13px]">📅</span>
+                <span>Tổng kỳ</span>
+              </div>
+              <div className="mono-num mt-1 text-[15px] font-black">{txns.length}</div>
+            </div>
+            <div className="rounded-2xl bg-white/14 p-2.5 ring-1 ring-white/15 backdrop-blur">
+              <div className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-[0.08em] text-white/65">
+                <span className="text-[13px]">✓</span>
+                <span>Hoàn tất</span>
+              </div>
+              <div className="mono-num mt-1 text-[15px] font-black">{doneTxns}</div>
+            </div>
+            <div className="rounded-2xl bg-white/14 p-2.5 ring-1 ring-white/15 backdrop-blur">
+              <div className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-[0.08em] text-white/65">
+                <span className="text-[13px]">⏳</span>
+                <span>Đang chờ</span>
+              </div>
+              <div className="mono-num mt-1 text-[15px] font-black">{syncing ? '...' : incompleteTxns}</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-4">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <div>
+              <div className="text-[17px] font-black">Giao dịch DCA</div>
+              <div className="mt-0.5 text-[12px] font-semibold text-ink-3">
+                {txns.length ? `${txns.length} kỳ gần nhất` : 'Chưa có kỳ nào'}
+              </div>
+            </div>
+          </div>
+
+          {txns.length === 0 ? (
+            <div className="rounded-[24px] bg-white px-5 py-8 text-center shadow-card">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-grass-50 text-2xl">🌱</div>
+              <div className="mt-3 text-[15px] font-black">Chưa có lịch sử giao dịch</div>
+              <div className="mt-1 text-[12px] font-semibold text-ink-3">
+                Khi đến ngày DCA, app sẽ tạo kỳ giao dịch ở đây.
+              </div>
+            </div>
+          ) : (
+            <div className="relative pl-4">
+              <div className="absolute bottom-6 left-[7px] top-5 w-px bg-grass-100" />
+              <div className="flex flex-col gap-3">
+                {txns.slice(0, 30).map((t) => {
+                  const progress = itemProgress(t.items)
+                  const isDone = t.status === 'success'
+                  const isPartial = t.status === 'partial'
+                  const statusLabel = isDone ? 'Hoàn tất' : isPartial ? 'Một phần' : 'Chờ xử lý'
+                  const statusClass = isDone
+                    ? 'bg-grass-50 text-grass-800 border-grass-100'
+                    : isPartial
+                      ? 'bg-amber-50 text-amber-700 border-amber-100'
+                      : 'bg-gray-50 text-ink-3 border-gray-100'
+
+                  return (
+                    <article key={t.id} className="relative">
+                      <div
+                        className={`absolute -left-4 top-5 h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm ${
+                          isDone ? 'bg-grass-600' : isPartial ? 'bg-amber-400' : 'bg-gray-300'
+                        }`}
+                      />
+
+                      <div className="rounded-[24px] bg-white p-4 shadow-card">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-ink-3">
+                              {fmtDateShort(t.date)}
+                            </div>
+                            <div className="mono-num mt-1 text-[21px] font-black tracking-tight text-ink-1">
+                              {fmtVNDfull(t.amount)}
+                            </div>
+                          </div>
+                          <span className={`rounded-full border px-2.5 py-1 text-[11px] font-extrabold ${statusClass}`}>
+                            {statusLabel}
+                          </span>
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2">
+                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                            <div
+                              className={`h-full rounded-full ${isDone ? 'bg-grass-600' : isPartial ? 'bg-amber-400' : 'bg-gray-300'}`}
+                              style={{ width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%` }}
+                            />
+                          </div>
+                          <span className="mono-num text-[11px] font-black text-ink-3">
+                            {progress.done}/{progress.total}
+                          </span>
+                        </div>
+
+                        <div className="mt-3 flex flex-col gap-2">
+                          {t.items.map((item) => (
+                            <div key={item.id} className="flex items-center gap-2 rounded-2xl bg-canvas px-3 py-2.5">
+                              <span className="h-9 w-1.5 flex-shrink-0 rounded-full" style={{ background: item.assetColor }} />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[12px] font-black text-ink-1">{item.assetId}</span>
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                                      item.status === 'success'
+                                        ? 'bg-grass-50 text-grass-700'
+                                        : 'bg-white text-ink-3'
+                                    }`}
+                                  >
+                                    {item.status === 'success' ? 'Đã ghi nhận' : 'Chờ'}
+                                  </span>
+                                </div>
+                                <div className="mono-num mt-0.5 text-[11px] font-semibold text-ink-3">
+                                  {fmtVNDfull(item.amount)}
+                                  {item.quantity != null && item.quantity > 0 ? ` · ${item.quantity.toFixed(4)} cp/ccq` : ''}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+    )
+  }
+
   return (
     <div className="fade-up pb-4">
       <div className="mb-5">
-        <div className="text-2xl font-black tracking-tight">Lịch sử giao dịch</div>
-        <div className="text-ink-3 mt-1.5 text-sm">Mỗi kỳ DCA gom các mã trong cùng một giao dịch</div>
+        <div className="text-2xl font-black tracking-tight">
+          {planId ? 'Lịch sử kế hoạch' : 'Lịch sử giao dịch'}
+        </div>
+        <div className="text-ink-3 mt-1.5 text-sm">
+          {planId && activePlan
+            ? `${activePlan.name} · mỗi kỳ DCA gom các mã trong cùng một giao dịch`
+            : 'Mỗi kỳ DCA gom các mã trong cùng một giao dịch'}
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2">

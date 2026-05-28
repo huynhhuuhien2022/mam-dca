@@ -8,6 +8,8 @@ import AppShell from './shell/AppShell'
 import Dashboard   from '@/features/dashboard'
 import Browse      from '@/features/browse'
 import AssetDetail from '@/features/asset-detail'
+import PlanDetail  from '@/features/plan-detail'
+import PlanHistory from '@/features/plan-history'
 import CreatePlan  from '@/features/create-plan'
 import Calculator  from '@/features/calculator'
 import History     from '@/features/history'
@@ -293,6 +295,8 @@ function getPage(screen: Screen, layout: 'A' | 'B') {
     case 'dashboard': return () => <Dashboard layout={layout} />
     case 'browse':    return Browse
     case 'detail':    return AssetDetail
+    case 'planDetail': return PlanDetail
+    case 'planHistory': return PlanHistory
     case 'create':    return CreatePlan
     case 'calc':      return Calculator
     case 'history':   return History

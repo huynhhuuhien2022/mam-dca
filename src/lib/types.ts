@@ -49,6 +49,8 @@ export type Screen =
   | 'dashboard'
   | 'browse'
   | 'detail'
+  | 'planDetail'
+  | 'planHistory'
   | 'create'
   | 'calc'
   | 'history'
@@ -66,7 +68,7 @@ export interface ToastPayload {
 
 /* ── Store actions ── */
 export type AppAction =
-  | { type: 'go'; screen: Screen; assetId?: string; prefill?: Partial<Plan> }
+  | { type: 'go'; screen: Screen; assetId?: string; planId?: string; prefill?: Partial<Plan> }
   | { type: 'setAssets'; assets: Asset[] }
   | { type: 'setPlans'; plans: Plan[] }
   | { type: 'setStreak'; streak: number }

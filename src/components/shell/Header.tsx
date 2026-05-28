@@ -6,9 +6,11 @@ import type { Screen } from "@/lib/types";
 import { useShallow } from "zustand/react/shallow";
 
 const SUBPAGE_HEADER: Partial<
-  Record<Screen, { title: string; backTo: Screen }>
+  Record<Screen, { title: string; backTo: Screen; action?: "editPlan" }>
 > = {
   profileEdit: { title: "Cập nhật hồ sơ", backTo: "profile" },
+  planDetail: { title: "Chi tiết kế hoạch", backTo: "dashboard", action: "editPlan" },
+  planHistory: { title: "Lịch sử kế hoạch", backTo: "planDetail" },
 };
 
 export default function Header() {
@@ -34,7 +36,30 @@ export default function Header() {
         <div className="text-[16px] font-black tracking-tight">
           {subpage.title}
         </div>
-        <span className="w-[68px]" />
+        {subpage.action === "editPlan" ? (
+          <button
+            type="button"
+            onClick={() =>
+              dispatch({
+                type: "showToast",
+                toast: {
+                  message: "Chỉnh sửa kế hoạch sẽ làm ở bước tiếp theo",
+                  icon: "✎",
+                },
+              })
+            }
+            className="w-9 h-9 grid place-items-center rounded-xl bg-grass-50 text-grass-700 active:scale-95 transition-transform"
+            aria-label="Chỉnh sửa kế hoạch"
+            title="Chỉnh sửa"
+          >
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden>
+              <path d="M4 14.5V16H5.5L14.2 7.3L12.7 5.8L4 14.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M11.8 4.9L13 3.7C13.6 3.1 14.5 3.1 15.1 3.7L16.3 4.9C16.9 5.5 16.9 6.4 16.3 7L15.1 8.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </button>
+        ) : (
+          <span className="w-9" />
+        )}
       </header>
     );
   }
