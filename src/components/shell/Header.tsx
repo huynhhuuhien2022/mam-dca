@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import { useAppStore } from "@/lib/store";
+import { getAvatarPreset } from "@/lib/avatar-presets";
+import { getSupabaseClient } from "@/lib/supabase";
 import type { Screen } from "@/lib/types";
 import { useShallow } from "zustand/react/shallow";
 
@@ -21,6 +24,33 @@ export default function Header() {
       dispatch: s.dispatch,
     })),
   );
+  const [avatarId, setAvatarId] = useState("sprout");
+
+  useEffect(() => {
+    let active = true;
+    if (!auth) {
+      setAvatarId("sprout");
+      return () => {
+        active = false;
+      };
+    }
+
+    (async () => {
+      try {
+        const supabase = getSupabaseClient();
+        const { data } = await supabase.auth.getUser();
+        if (!active) return;
+        const meta = data.user?.user_metadata as { avatar_id?: string } | null;
+        setAvatarId(meta?.avatar_id ?? "sprout");
+      } catch {
+        if (active) setAvatarId("sprout");
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [auth, screen]);
 
   const subpage = SUBPAGE_HEADER[screen];
   if (subpage) {
@@ -110,9 +140,11 @@ export default function Header() {
           {auth ? (
             <button
               onClick={() => dispatch({ type: "go", screen: "profile" })}
-              className="w-9 h-9 rounded-xl brand-soft text-grass-900 grid place-items-center font-black text-[13px] active:scale-95 transition-transform"
+              className="w-9 h-9 rounded-xl grid place-items-center text-[20px] active:scale-95 transition-transform shadow-sm"
+              style={{ background: getAvatarPreset(avatarId).gradient }}
+              aria-label="Mở hồ sơ"
             >
-              MN
+              {getAvatarPreset(avatarId).emoji}
             </button>
           ) : (
             <Button

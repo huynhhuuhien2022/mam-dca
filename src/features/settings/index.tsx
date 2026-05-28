@@ -5,6 +5,7 @@ import { useAppStore } from '@/lib/store'
 import { useShallow } from 'zustand/react/shallow'
 import Button from '@/components/ui/Button'
 import { getSupabaseClient } from '@/lib/supabase'
+import { getAvatarPreset } from '@/lib/avatar-presets'
 
 const NOTIF_ITEMS = [
   { id: 'dca',       label: 'Nhắc đến hạn DCA',      sub: 'Nhắc trước 1 ngày' },
@@ -37,6 +38,7 @@ export default function Settings() {
     dispatch: s.dispatch,
   })))
   const [displayName, setDisplayName] = useState('Người dùng Mầm')
+  const [avatarId, setAvatarId] = useState('sprout')
   const [joinedDays, setJoinedDays] = useState(1)
   const [notifs, setNotifs] = useState<Record<string, boolean>>({
     dca: true, market: false, milestone: true, weekly: true, tips: false,
@@ -46,6 +48,7 @@ export default function Settings() {
     let active = true
     if (!auth) {
       setDisplayName('Người dùng Mầm')
+      setAvatarId('sprout')
       setJoinedDays(1)
       return () => {
         active = false
@@ -57,16 +60,18 @@ export default function Settings() {
         const supabase = getSupabaseClient()
         const { data, error } = await supabase.auth.getUser()
         if (error || !data.user || !active) return
-        const meta = data.user.user_metadata as { full_name?: string } | null
+        const meta = data.user.user_metadata as { full_name?: string; avatar_id?: string } | null
         const safeName = meta?.full_name?.trim() || 'Người dùng Mầm'
         const createdAt = data.user.created_at ? new Date(data.user.created_at).getTime() : Date.now()
         const diffMs = Math.max(0, Date.now() - createdAt)
         const days = Math.max(1, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
         setDisplayName(safeName)
+        setAvatarId(meta?.avatar_id ?? 'sprout')
         setJoinedDays(days)
       } catch {
         if (active) {
           setDisplayName('Người dùng Mầm')
+          setAvatarId('sprout')
           setJoinedDays(1)
         }
       }
@@ -83,8 +88,11 @@ export default function Settings() {
       {auth ? (
         <div className="flex flex-col gap-2.5">
           <div className="bg-white rounded-2xl shadow-card p-4 flex items-center gap-3 relative">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-grass-400 to-grass-600 grid place-items-center text-2xl flex-shrink-0">
-              🌱
+            <div
+              className="w-12 h-12 rounded-2xl grid place-items-center text-2xl flex-shrink-0 shadow-sm"
+              style={{ background: getAvatarPreset(avatarId).gradient }}
+            >
+              {getAvatarPreset(avatarId).emoji}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-extrabold text-[15px] text-ink-1 truncate">{displayName}</div>

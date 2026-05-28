@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import Button from '@/components/ui/Button'
 import { getSupabaseClient } from '@/lib/supabase'
+import { AVATAR_PRESETS, getAvatarPreset } from '@/lib/avatar-presets'
 
 const GENDERS = ['Nam', 'Nữ', 'Khác'] as const
 
@@ -22,6 +23,8 @@ export default function ProfileEdit() {
   const [birthday, setBirthday] = useState('1998-01-01')
   const [gender, setGender] = useState<(typeof GENDERS)[number]>('Nam')
   const [phone, setPhone] = useState('')
+  const [avatarId, setAvatarId] = useState('sprout')
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -36,11 +39,15 @@ export default function ProfileEdit() {
           full_name?: string
           birthday?: string
           gender?: (typeof GENDERS)[number]
+          avatar_id?: string
         } | null
 
         if (meta?.full_name) setName(meta.full_name)
         if (meta?.birthday) setBirthday(meta.birthday)
         if (meta?.gender && GENDERS.includes(meta.gender)) setGender(meta.gender)
+        if (meta?.avatar_id && AVATAR_PRESETS.some((avatar) => avatar.id === meta.avatar_id)) {
+          setAvatarId(meta.avatar_id)
+        }
         setPhone(data.user.phone ? toLocalPhone(data.user.phone) : '')
       } catch {
         // ignore and keep local defaults in demo mode
@@ -73,6 +80,30 @@ export default function ProfileEdit() {
   return (
     <div className="fade-up px-4 py-4 flex flex-col gap-4 bg-white min-h-full">
       <div className="bg-white rounded-2xl shadow-card p-4 flex flex-col gap-3">
+        <div className="flex flex-col items-center py-2">
+          <div className="relative">
+            <div
+              className="grid h-24 w-24 place-items-center rounded-full text-[46px] shadow-cta ring-4 ring-white"
+              style={{ background: getAvatarPreset(avatarId).gradient }}
+            >
+              {getAvatarPreset(avatarId).emoji}
+            </div>
+            <button
+              type="button"
+              onClick={() => setAvatarPickerOpen(true)}
+              className="absolute -bottom-1 -right-1 grid h-9 w-9 place-items-center rounded-full bg-grass-600 text-white shadow-card ring-4 ring-white active:scale-95"
+              aria-label="Chọn avatar"
+            >
+              <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden>
+                <path d="M4 14.5V16H5.5L14.2 7.3L12.7 5.8L4 14.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                <path d="M11.8 4.9L13 3.7C13.6 3.1 14.5 3.1 15.1 3.7L16.3 4.9C16.9 5.5 16.9 6.4 16.3 7L15.1 8.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          <div className="mt-3 text-[13px] font-black text-ink-1">{getAvatarPreset(avatarId).label}</div>
+          <div className="mt-0.5 text-[11px] font-semibold text-ink-3">Bấm icon để chọn avatar có sẵn</div>
+        </div>
+
         <div>
           <label className="text-[11px] font-extrabold text-ink-3 uppercase tracking-[0.12em]">Tên</label>
           <input
@@ -145,6 +176,7 @@ export default function ProfileEdit() {
                   full_name: name.trim(),
                   birthday,
                   gender,
+                  avatar_id: avatarId,
                 },
               })
 
@@ -165,6 +197,71 @@ export default function ProfileEdit() {
           {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
         </Button>
       </div>
+
+      {avatarPickerOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end bg-ink-1/45 px-4 pb-4 backdrop-blur-[3px]"
+          onClick={() => setAvatarPickerOpen(false)}
+        >
+          <div
+            className="w-full rounded-[28px] bg-white p-4 shadow-[0_24px_80px_rgba(8,24,18,0.22)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-gray-200" />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-[18px] font-black tracking-tight">Chọn avatar</div>
+                <div className="mt-1 text-[12px] font-semibold text-ink-3">
+                  Chọn một hình đại diện có sẵn cho hồ sơ Mầm.
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAvatarPickerOpen(false)}
+                className="grid h-9 w-9 place-items-center rounded-full bg-canvas text-[18px] font-black text-ink-2"
+                aria-label="Đóng"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-4 gap-3">
+              {AVATAR_PRESETS.map((avatar) => {
+                const active = avatar.id === avatarId
+                return (
+                  <button
+                    key={avatar.id}
+                    type="button"
+                    onClick={() => {
+                      setAvatarId(avatar.id)
+                      setAvatarPickerOpen(false)
+                    }}
+                    className={`relative rounded-[22px] p-1.5 transition-all active:scale-95 ${
+                      active ? 'bg-grass-50 ring-2 ring-grass-500' : 'bg-canvas ring-1 ring-gray-100'
+                    }`}
+                    aria-label={`Chọn avatar ${avatar.label}`}
+                  >
+                    <span
+                      className="grid aspect-square w-full place-items-center rounded-[18px] text-3xl shadow-sm"
+                      style={{ background: avatar.gradient }}
+                    >
+                      {avatar.emoji}
+                    </span>
+                    <span className="mt-1 block truncate text-[10px] font-extrabold text-ink-3">
+                      {avatar.label}
+                    </span>
+                    {active ? (
+                      <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-grass-600 text-[10px] font-black text-white ring-2 ring-white">
+                        ✓
+                      </span>
+                    ) : null}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
