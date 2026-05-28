@@ -18,10 +18,14 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
   return (
     <button
       onClick={() => onChange(!on)}
-      className={`w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0 ${on ? 'bg-grass-500' : 'bg-gray-200'}`}
+      type="button"
+      role="switch"
+      aria-checked={on}
+      className="relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 border border-white/70"
+      style={{ backgroundColor: on ? '#15803D' : '#BBF7D0' }}
     >
       <span
-        className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${on ? 'translate-x-5' : 'translate-x-0.5'}`}
+        className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${on ? 'translate-x-5' : 'translate-x-0.5'}`}
       />
     </button>
   )
@@ -111,11 +115,11 @@ export default function Settings() {
         {NOTIF_ITEMS.map((item, i) => (
           <div
             key={item.id}
-            className={`flex items-center gap-3 px-4 py-3 ${i < NOTIF_ITEMS.length - 1 ? 'border-b border-gray-50' : ''}`}
+            className={`flex items-center gap-3 px-4 py-3.5 min-h-[62px] ${i < NOTIF_ITEMS.length - 1 ? 'border-b border-gray-50' : ''}`}
           >
             <div className="flex-1 min-w-0">
-              <div className="font-bold text-[13px] text-ink-1">{item.label}</div>
-              <div className="text-[11px] text-ink-3 mt-0.5">{item.sub}</div>
+              <div className="font-bold text-[13px] leading-tight text-ink-1">{item.label}</div>
+              <div className="text-[11px] leading-tight text-ink-3 mt-1">{item.sub}</div>
             </div>
             <Toggle
               on={notifs[item.id]}

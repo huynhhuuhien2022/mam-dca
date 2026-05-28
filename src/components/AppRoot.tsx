@@ -18,12 +18,32 @@ import type { Screen } from '@/lib/types'
 
 const AUTH_SCREENS: Screen[] = ['login', 'signup']
 
-const CAT_COLOR: Record<Asset['cat'], string> = {
-  etf: '#22C55E',
-  fund: '#10B981',
-  stock: '#3B82F6',
-  gold: '#FBBF24',
-  savings: '#94A3B8',
+const ASSET_PALETTE = [
+  '#16A34A', // green
+  '#2563EB', // blue
+  '#1E3A8A', // deep blue
+  '#DC2626', // red
+  '#EA580C', // orange
+  '#0D9488', // teal
+  '#65A30D', // lime
+  '#0891B2', // cyan
+  '#4F46E5', // indigo
+  '#7C3AED', // violet
+  '#BE123C', // rose
+  '#B45309', // amber-brown
+  '#15803D', // dark green
+  '#1D4ED8', // strong blue
+  '#9A3412', // burnt orange
+  '#0F766E', // dark teal
+]
+
+function colorBySymbol(input: string): string {
+  let hash = 0
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i)
+    hash |= 0
+  }
+  return ASSET_PALETTE[Math.abs(hash) % ASSET_PALETTE.length]
 }
 
 function toRiskLevel(value: string | null | undefined): RiskLevel {
@@ -108,7 +128,7 @@ export default function AppRoot() {
               ytd,
               y3,
               y5,
-              color: CAT_COLOR[cat],
+              color: colorBySymbol((row.symbol || row.id).trim().toUpperCase()),
               tags: cat === 'stock' ? ['DCA dài hạn', 'Biến động'] : cat === 'fund' ? ['Đa dạng', 'Quản lý quỹ'] : ['Phòng ngừa', 'Lạm phát'],
               note: 'Dữ liệu tham khảo cho mô phỏng DCA, không phải khuyến nghị đầu tư.',
               logoUrl: row.logo_url ?? undefined,

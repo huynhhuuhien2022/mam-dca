@@ -12,6 +12,7 @@ interface DonutAllocationProps {
 export default function DonutAllocation({ items, size = 180, stroke = 22 }: DonutAllocationProps) {
   const r = (size - stroke) / 2
   const c = 2 * Math.PI * r
+  const gapPx = 2
   let acc = 0
 
   return (
@@ -20,7 +21,8 @@ export default function DonutAllocation({ items, size = 180, stroke = 22 }: Donu
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F1F4F2" strokeWidth={stroke} />
       {/* Slices */}
       {items.map((it, i) => {
-        const len = (it.pct / 100) * c
+        const rawLen = (it.pct / 100) * c
+        const len = Math.max(0, rawLen - gapPx)
         const rot = (acc / 100) * 360 - 90
         acc += it.pct
         return (
