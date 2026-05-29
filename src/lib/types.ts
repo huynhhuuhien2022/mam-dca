@@ -77,5 +77,6 @@ export type AppAction =
   | { type: 'setAuth'; value: boolean }
   | { type: 'logout' }
   | { type: 'addPlan'; plan: Omit<Plan, 'id' | 'startMonth' | 'totalInvested' | 'currentValue'>; id?: string }
+  | { type: 'updatePlan'; id: string; plan: Omit<Plan, 'id' | 'startMonth' | 'totalInvested' | 'currentValue'> }
   | { type: 'showToast'; toast: ToastPayload }
   | { type: 'clearToast' }

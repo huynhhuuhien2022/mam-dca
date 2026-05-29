@@ -5,6 +5,7 @@ import { useAppStore } from '@/lib/store'
 import Button from '@/components/ui/Button'
 import { getSupabaseClient } from '@/lib/supabase'
 import { AVATAR_PRESETS, getAvatarPreset } from '@/lib/avatar-presets'
+import { CalendarDays, Camera, ChevronDown } from 'lucide-react'
 
 const GENDERS = ['Nam', 'Nữ', 'Khác'] as const
 
@@ -91,13 +92,10 @@ export default function ProfileEdit() {
             <button
               type="button"
               onClick={() => setAvatarPickerOpen(true)}
-              className="absolute -bottom-1 -right-1 grid h-9 w-9 place-items-center rounded-full bg-grass-600 text-white shadow-card ring-4 ring-white active:scale-95"
+              className="absolute -bottom-1 -right-1 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-grass-100 bg-white leading-none shadow-[0_6px_14px_rgba(6,95,70,0.22)] ring-2 ring-white transition-transform active:scale-95"
               aria-label="Chọn avatar"
             >
-              <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden>
-                <path d="M4 14.5V16H5.5L14.2 7.3L12.7 5.8L4 14.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-                <path d="M11.8 4.9L13 3.7C13.6 3.1 14.5 3.1 15.1 3.7L16.3 4.9C16.9 5.5 16.9 6.4 16.3 7L15.1 8.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
+              <Camera size={20} strokeWidth={2.5} className="block text-grass-600" aria-hidden />
             </button>
           </div>
           <div className="mt-3 text-[13px] font-black text-ink-1">{getAvatarPreset(avatarId).label}</div>
@@ -133,10 +131,7 @@ export default function ProfileEdit() {
               className="calendar-input w-full h-11 rounded-xl border border-gray-200 pl-3 pr-10 text-[14px] font-semibold bg-white"
             />
             <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-grass-700">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <rect x="3.5" y="5.5" width="17" height="15" rx="3" stroke="currentColor" strokeWidth="1.8" />
-                <path d="M8 3.8V7M16 3.8V7M3.5 9.5H20.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
+              <CalendarDays size={16} strokeWidth={2.1} aria-hidden />
             </span>
           </div>
         </div>
@@ -156,9 +151,7 @@ export default function ProfileEdit() {
               ))}
             </select>
             <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-grass-700">
-              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden>
-                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <ChevronDown size={16} strokeWidth={2.3} aria-hidden />
             </span>
           </div>
         </div>

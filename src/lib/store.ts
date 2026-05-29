@@ -127,6 +127,29 @@ function reduce(state: AppState, action: AppAction): Partial<AppState> {
       }
     }
 
+    case 'updatePlan': {
+      const plans = state.plans.map((plan) =>
+        plan.id === action.id
+          ? {
+              ...plan,
+              name: action.plan.name,
+              emoji: action.plan.emoji,
+              amount: action.plan.amount,
+              freq: action.plan.freq,
+              freqDays: action.plan.freqDays ?? [],
+              duration: action.plan.duration ?? null,
+              allocation: action.plan.allocation,
+            }
+          : plan,
+      )
+      return {
+        plans,
+        ...derivePortfolio(plans),
+        planId: action.id,
+        toast: { message: `Đã cập nhật kế hoạch "${action.plan.name}"`, icon: '✓' },
+      }
+    }
+
     case 'showToast':
       return { toast: action.toast }
 

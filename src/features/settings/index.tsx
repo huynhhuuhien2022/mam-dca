@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import Button from '@/components/ui/Button'
 import { getSupabaseClient } from '@/lib/supabase'
 import { getAvatarPreset } from '@/lib/avatar-presets'
+import { Pencil } from 'lucide-react'
 
 const NOTIF_ITEMS = [
   { id: 'dca',       label: 'Nhắc đến hạn DCA',      sub: 'Nhắc trước 1 ngày' },
@@ -100,12 +101,10 @@ export default function Settings() {
             </div>
             <button
               onClick={() => dispatch({ type: 'go', screen: 'profileEdit' })}
-              className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-grass-50 text-grass-700 grid place-items-center border border-grass-100 active:scale-95"
+              className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-xl border border-grass-100 bg-grass-50 text-grass-700 leading-none active:scale-95"
               aria-label="Cập nhật hồ sơ"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M4 20h4l10-10a2.2 2.2 0 1 0-3.1-3.1L4.8 16.9 4 20Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Pencil size={16} strokeWidth={2.3} className="block" aria-hidden />
             </button>
           </div>
         </div>

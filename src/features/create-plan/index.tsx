@@ -14,26 +14,33 @@ import StepDone from './components/StepDone'
 import type { PlanDraft } from './components/types'
 
 export default function CreatePlan() {
-  const { dispatch, auth, prefill, assets } = useAppStore(
+  const { dispatch, auth, prefill, assets, planId } = useAppStore(
     useShallow((s) => ({
       dispatch: s.dispatch,
       auth: s.auth,
       prefill: s.prefill,
       assets: s.assets,
+      planId: s.planId,
     })),
   )
   const initial = prefill ?? {}
+  const initialDraft = initial as Partial<PlanDraft>
+  const editPlanId = initial.id ?? planId ?? undefined
+  const isEditing = Boolean(initial.id)
+  const initialDuration = Object.prototype.hasOwnProperty.call(initial, 'duration')
+    ? initialDraft.duration ?? null
+    : 5
 
   const [step, setStep] = useState(0)
   const [savingPlan, setSavingPlan] = useState(false)
   const [plan, setPlan] = useState<PlanDraft>({
-    name: '',
-    emoji: '🌱',
-    amount: (initial as PlanDraft).amount || 2_000_000,
-    freq: (initial as PlanDraft).freq || 'month',
-    freqDays: (initial as PlanDraft).freqDays || [1],
-    duration: (initial as PlanDraft).duration ?? 5,
-    allocation: (initial as PlanDraft).allocation || [],
+    name: initialDraft.name ?? '',
+    emoji: initialDraft.emoji ?? '🌱',
+    amount: initialDraft.amount ?? 2_000_000,
+    freq: initialDraft.freq ?? 'month',
+    freqDays: initialDraft.freqDays ?? [1],
+    duration: initialDuration,
+    allocation: initialDraft.allocation ?? [],
   })
 
   const canNext =
@@ -44,6 +51,11 @@ export default function CreatePlan() {
   async function handleNext() {
     if (step === 2) {
       if (!auth) {
+        if (isEditing) {
+          dispatch({ type: 'showToast', toast: { message: 'Vui lòng đăng nhập để chỉnh sửa kế hoạch', icon: '!' } })
+          return
+        }
+
         dispatch({
           type: 'requireAuth',
           pending: {
@@ -61,6 +73,65 @@ export default function CreatePlan() {
         const { data: userRes, error: userErr } = await supabase.auth.getUser()
         if (userErr || !userRes.user) {
           dispatch({ type: 'showToast', toast: { message: 'Phiên đăng nhập không hợp lệ', icon: '!' } })
+          return
+        }
+
+        if (isEditing) {
+          if (!editPlanId) {
+            dispatch({ type: 'showToast', toast: { message: 'Không tìm thấy kế hoạch để cập nhật', icon: '!' } })
+            return
+          }
+
+          const { data: updatedPlan, error: planErr } = await supabase
+            .from('user_plans')
+            .update({
+              name: safePlan.name,
+              emoji: safePlan.emoji,
+              amount: safePlan.amount,
+              freq: safePlan.freq,
+              freq_days: safePlan.freqDays,
+              duration_years: safePlan.duration,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', editPlanId)
+            .select('id')
+            .single()
+
+          if (planErr || !updatedPlan) {
+            dispatch({ type: 'showToast', toast: { message: 'Không thể cập nhật kế hoạch', icon: '!' } })
+            return
+          }
+
+          const allocations = safePlan.allocation.map((a, i) => ({
+            plan_id: editPlanId,
+            asset_symbol: a.id,
+            pct: a.pct,
+            position: i,
+          }))
+
+          const { error: upsertErr } = await supabase
+            .from('user_plan_allocations')
+            .upsert(allocations, { onConflict: 'plan_id,asset_symbol' })
+
+          if (upsertErr) {
+            dispatch({ type: 'showToast', toast: { message: 'Không thể lưu phân bổ kế hoạch', icon: '!' } })
+            return
+          }
+
+          const keepSymbols = safePlan.allocation.map((a) => a.id)
+          const { error: deleteErr } = await supabase
+            .from('user_plan_allocations')
+            .delete()
+            .eq('plan_id', editPlanId)
+            .not('asset_symbol', 'in', `(${keepSymbols.join(',')})`)
+
+          if (deleteErr) {
+            dispatch({ type: 'showToast', toast: { message: 'Không thể xoá phân bổ cũ', icon: '!' } })
+            return
+          }
+
+          dispatch({ type: 'updatePlan', id: editPlanId, plan: safePlan })
+          setStep((s) => Math.min(3, s + 1))
           return
         }
 
@@ -102,7 +173,7 @@ export default function CreatePlan() {
 
         dispatch({ type: 'addPlan', id: planRow.id, plan: safePlan })
       } catch {
-        dispatch({ type: 'showToast', toast: { message: 'Không thể tạo kế hoạch', icon: '!' } })
+        dispatch({ type: 'showToast', toast: { message: isEditing ? 'Không thể cập nhật kế hoạch' : 'Không thể tạo kế hoạch', icon: '!' } })
         return
       } finally {
         setSavingPlan(false)
@@ -113,18 +184,15 @@ export default function CreatePlan() {
   }
 
   return (
-    <div className="fade-up pb-6">
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <Button variant="ghost" size="sm" onClick={() => dispatch({ type: 'go', screen: 'dashboard' })}>
-          ← Hủy
-        </Button>
+    <div className="fade-up px-4 pt-4 pb-6">
+      <div className="mb-4 flex justify-end">
         <Stepper step={step} />
       </div>
 
       {step === 0 && <StepGoal plan={plan} setPlan={setPlan} />}
       {step === 1 && <StepAssets plan={plan} setPlan={setPlan} assets={assets} />}
       {step === 2 && <StepReview plan={plan} assets={assets} />}
-      {step === 3 && <StepDone plan={plan} dispatch={dispatch} />}
+      {step === 3 && <StepDone plan={plan} dispatch={dispatch} isEditing={isEditing} planId={editPlanId} />}
 
       {step < 3 && (
         <div className="flex items-center justify-between mt-5 gap-2">
@@ -136,7 +204,9 @@ export default function CreatePlan() {
             <span />
           )}
           <Button size="lg" disabled={!canNext || savingPlan} className={cn('flex-1', (!canNext || savingPlan) ? 'opacity-50 cursor-not-allowed' : '')} onClick={handleNext}>
-            {step === 2 ? (savingPlan ? 'Đang tạo...' : auth ? 'Bắt đầu DCA ✨' : 'Đăng nhập để bắt đầu →') : 'Tiếp theo →'}
+            {step === 2
+              ? (savingPlan ? (isEditing ? 'Đang lưu...' : 'Đang tạo...') : isEditing ? 'Lưu thay đổi' : auth ? 'Bắt đầu DCA ✨' : 'Đăng nhập để bắt đầu →')
+              : 'Tiếp theo →'}
           </Button>
         </div>
       )}

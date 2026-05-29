@@ -15,7 +15,7 @@ interface AppShellProps {
 export default function AppShell({ children, showStreak = true }: AppShellProps) {
   const screen = useAppStore(s => s.screen)
   const mainRef = useRef<HTMLDivElement>(null)
-  const isSubpage = screen === 'profileEdit' || screen === 'planDetail' || screen === 'planHistory'
+  const isSubpage = screen === 'profileEdit' || screen === 'planDetail' || screen === 'planHistory' || screen === 'create'
 
   useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTop = 0

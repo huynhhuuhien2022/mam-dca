@@ -6,21 +6,25 @@ import { useAppStore } from "@/lib/store";
 import { getAvatarPreset } from "@/lib/avatar-presets";
 import { getSupabaseClient } from "@/lib/supabase";
 import type { Screen } from "@/lib/types";
+import { ArrowLeft, Bell, Pencil, Search } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
-const SUBPAGE_HEADER: Partial<
-  Record<Screen, { title: string; backTo: Screen; action?: "editPlan" }>
-> = {
+type SubpageHeaderConfig = { title: string; backTo: Screen; action?: "editPlan" };
+
+const SUBPAGE_HEADER: Partial<Record<Screen, SubpageHeaderConfig>> = {
   profileEdit: { title: "Cập nhật hồ sơ", backTo: "profile" },
   planDetail: { title: "Chi tiết kế hoạch", backTo: "dashboard", action: "editPlan" },
   planHistory: { title: "Lịch sử kế hoạch", backTo: "planDetail" },
 };
 
 export default function Header() {
-  const { auth, screen, dispatch } = useAppStore(
+  const { auth, screen, planId, plans, prefill, dispatch } = useAppStore(
     useShallow((s) => ({
       auth: s.auth,
       screen: s.screen,
+      planId: s.planId,
+      plans: s.plans,
+      prefill: s.prefill,
       dispatch: s.dispatch,
     })),
   );
@@ -52,16 +56,24 @@ export default function Header() {
     };
   }, [auth, screen]);
 
-  const subpage = SUBPAGE_HEADER[screen];
+  const subpage: SubpageHeaderConfig | undefined =
+    screen === "create"
+      ? {
+          title: prefill?.id ? "Chỉnh sửa kế hoạch" : "Tạo kế hoạch",
+          backTo: prefill?.id ? "planDetail" : "dashboard",
+        }
+      : SUBPAGE_HEADER[screen];
+  const activePlan = plans.find((plan) => plan.id === planId) ?? null;
+
   if (subpage) {
     return (
       <header className="flex items-center justify-between px-4 pt-9 pb-1.5 bg-white border-b border-gray-200">
         <button
-          onClick={() => dispatch({ type: "go", screen: subpage.backTo })}
-          className="w-8 h-8 grid place-items-center text-[18px] font-black text-ink-2"
+          onClick={() => dispatch({ type: "go", screen: subpage.backTo, planId: prefill?.id ?? planId ?? undefined })}
+          className="w-8 h-8 grid place-items-center text-ink-2"
           aria-label="Quay lại"
         >
-          ←
+          <ArrowLeft size={20} strokeWidth={2.6} aria-hidden />
         </button>
         <div className="text-[15px] font-black tracking-tight">
           {subpage.title}
@@ -69,23 +81,27 @@ export default function Header() {
         {subpage.action === "editPlan" ? (
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
+              if (!activePlan) {
+                dispatch({
+                  type: "showToast",
+                  toast: { message: "Không tìm thấy kế hoạch để chỉnh sửa", icon: "!" },
+                });
+                return;
+              }
+
               dispatch({
-                type: "showToast",
-                toast: {
-                  message: "Chỉnh sửa kế hoạch sẽ làm ở bước tiếp theo",
-                  icon: "✎",
-                },
-              })
-            }
+                type: "go",
+                screen: "create",
+                planId: activePlan.id,
+                prefill: activePlan,
+              });
+            }}
             className="w-8 h-8 grid place-items-center rounded-xl bg-grass-50 text-grass-700 active:scale-95 transition-transform"
             aria-label="Chỉnh sửa kế hoạch"
             title="Chỉnh sửa"
           >
-            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden>
-              <path d="M4 14.5V16H5.5L14.2 7.3L12.7 5.8L4 14.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-              <path d="M11.8 4.9L13 3.7C13.6 3.1 14.5 3.1 15.1 3.7L16.3 4.9C16.9 5.5 16.9 6.4 16.3 7L15.1 8.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            <Pencil size={17} strokeWidth={2.3} aria-hidden />
           </button>
         ) : (
           <span className="w-8" />
@@ -132,7 +148,7 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-1.5">
           {/* Bell */}
           <button className="w-8 h-8 grid place-items-center relative active:scale-95 transition-transform">
-            <span className="text-[19px]">🔔</span>
+            <Bell size={20} strokeWidth={2.4} aria-hidden />
             <span className="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-warm ring-2 ring-canvas" />
           </button>
 
@@ -162,7 +178,7 @@ export default function Header() {
       {/* Search bar */}
       <div className="px-4 pb-3 bg-canvas">
         <div className="flex items-center gap-2 bg-white border border-line rounded-full px-3.5 py-2.5 focus-within:border-grass-500 focus-within:shadow-glow transition-shadow">
-          <span className="text-base">🔍</span>
+          <Search size={18} strokeWidth={2.4} className="text-ink-3" aria-hidden />
           <input
             placeholder="Tìm quỹ, ETF, cổ phiếu..."
             onFocus={() => dispatch({ type: "go", screen: "browse" })}
