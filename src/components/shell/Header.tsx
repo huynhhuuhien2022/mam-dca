@@ -55,15 +55,15 @@ export default function Header() {
   const subpage = SUBPAGE_HEADER[screen];
   if (subpage) {
     return (
-      <header className="flex items-center justify-between px-4 pt-12 pb-3 bg-white border-b border-gray-200">
+      <header className="flex items-center justify-between px-4 pt-9 pb-1.5 bg-white border-b border-gray-200">
         <button
           onClick={() => dispatch({ type: "go", screen: subpage.backTo })}
-          className="w-9 h-9 grid place-items-center text-[20px] font-black text-ink-2"
+          className="w-8 h-8 grid place-items-center text-[18px] font-black text-ink-2"
           aria-label="Quay lại"
         >
           ←
         </button>
-        <div className="text-[16px] font-black tracking-tight">
+        <div className="text-[15px] font-black tracking-tight">
           {subpage.title}
         </div>
         {subpage.action === "editPlan" ? (
@@ -78,7 +78,7 @@ export default function Header() {
                 },
               })
             }
-            className="w-9 h-9 grid place-items-center rounded-xl bg-grass-50 text-grass-700 active:scale-95 transition-transform"
+            className="w-8 h-8 grid place-items-center rounded-xl bg-grass-50 text-grass-700 active:scale-95 transition-transform"
             aria-label="Chỉnh sửa kế hoạch"
             title="Chỉnh sửa"
           >
@@ -88,7 +88,7 @@ export default function Header() {
             </svg>
           </button>
         ) : (
-          <span className="w-9" />
+          <span className="w-8" />
         )}
       </header>
     );
@@ -97,10 +97,10 @@ export default function Header() {
   return (
     <>
       {/* Top bar */}
-      <header className="flex items-center gap-2 px-4 pt-12 pb-2 bg-canvas">
+      <header className="flex items-center gap-2 px-4 pt-9 pb-1.5 bg-canvas">
         {/* Logo */}
-        <div className="w-9 h-9 rounded-xl brand-gradient grid place-items-center shadow-cta flex-shrink-0">
-          <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden>
+        <div className="w-8 h-8 rounded-xl brand-gradient grid place-items-center shadow-cta flex-shrink-0">
+          <svg width="18" height="18" viewBox="0 0 32 32" aria-hidden>
             <path
               d="M 16 28 L 16 14"
               stroke="white"
@@ -125,14 +125,14 @@ export default function Header() {
             />
           </svg>
         </div>
-        <span className="font-black text-[18px] tracking-tight text-grass-500">
+        <span className="font-black text-[16px] tracking-tight text-grass-500">
           Mầm
         </span>
 
         <div className="ml-auto flex items-center gap-1.5">
           {/* Bell */}
-          <button className="w-9 h-9 grid place-items-center relative active:scale-95 transition-transform">
-            <span className="text-[22px]">🔔</span>
+          <button className="w-8 h-8 grid place-items-center relative active:scale-95 transition-transform">
+            <span className="text-[19px]">🔔</span>
             <span className="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-warm ring-2 ring-canvas" />
           </button>
 
@@ -140,7 +140,7 @@ export default function Header() {
           {auth ? (
             <button
               onClick={() => dispatch({ type: "go", screen: "profile" })}
-              className="w-9 h-9 rounded-xl grid place-items-center text-[20px] active:scale-95 transition-transform shadow-sm"
+              className="w-8 h-8 rounded-xl grid place-items-center text-[18px] active:scale-95 transition-transform shadow-sm"
               style={{ background: getAvatarPreset(avatarId).gradient }}
               aria-label="Mở hồ sơ"
             >
